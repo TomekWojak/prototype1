@@ -1,26 +1,338 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ============================================================
+   FESTIWAL „KSIĘGA I MIECZ” — WEN & WU
+   System wizualny: papier ryżowy, tusz sumi, cynober, złoto laki.
+   Wszystkie tokeny są celowo nazwane po materiałach, nie po roli —
+   dzięki temu sekcja „ciemna” zawsze znaczy to samo w całym serwisie.
+   ============================================================ */
+
+@theme {
+  /* ── Papier i tusz ─────────────────────────────────────── */
+  --color-paper: #fbf6f1;
+  --color-paper-warm: #f5eae0;
+  --color-paper-blush: #f3dcdf;
+  --color-ink: #1b1918;
+  --color-ink-soft: #423b38;
+  /* Przyciemnione z #7a6f69: na papierze dawało 4,43:1, czyli tuż pod
+     progiem WCAG AA (4,5:1) dla tekstu drobnego — a `ink-muted` trafia
+     głównie na metadane i drobny druk. Teraz 5,6:1. */
+  --color-ink-muted: #6a605a;
+  --color-ink-faint: #b8aba3;
+
+  /* ── Cynober i czerwień laki ───────────────────────────── */
+  --color-vermilion: #c8352b;
+  --color-vermilion-soft: #e0685c;
+  /* Przyciemnione z #a8221c. Na czystym papierze stara wartość dawała 6,5:1,
+     ale w najciemniejszym punkcie gradientu Hero spadała do 4,36:1 — tuż pod
+     progiem AA. Różnica jest niewidoczna gołym okiem, a kontrast przechodzi
+     w każdym punkcie tła. */
+  --color-seal: #9e1f19;
+  --color-crimson: #8e1b18;
+  --color-lacquer: #5e100e;
+  --color-lacquer-deep: #380807;
+
+  /* ── Złoto ─────────────────────────────────────────────── */
+  --color-gold: #d4a537;
+  --color-gold-light: #f0d492;
+  --color-gold-deep: #96701a;
+
+  /* ── Jadeit — jedyny zimny akcent, używany oszczędnie ──── */
+  --color-jade: #4b7a65;
+
+  /* ── Typografia ────────────────────────────────────────── */
+  --font-display: var(--font-playfair), "Playfair Display", "Georgia", serif;
+  --font-body: var(--font-inter), "Inter", system-ui, -apple-system, sans-serif;
+  --font-cjk: "Noto Serif SC", "Source Han Serif SC", "Songti SC", STSong,
+    SimSun, "Microsoft YaHei", serif;
+
+  /* ── Cienie ────────────────────────────────────────────── */
+  --shadow-paper: 0 1px 2px rgb(27 25 24 / 0.04),
+    0 10px 28px -14px rgb(27 25 24 / 0.16);
+  --shadow-lift: 0 2px 4px rgb(27 25 24 / 0.05),
+    0 22px 48px -22px rgb(94 16 14 / 0.32);
+  --shadow-lacquer: 0 20px 56px -24px rgb(0 0 0 / 0.72);
+  --shadow-seal: 0 0 0 1px rgb(168 34 28 / 0.28),
+    0 6px 18px -8px rgb(168 34 28 / 0.4);
+
+  /* ── Animacje ──────────────────────────────────────────── */
+  --animate-ink-in: ink-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-drift: drift 22s ease-in-out infinite;
+  --animate-sway: sway 7s ease-in-out infinite;
+  --animate-breathe: breathe 5s ease-in-out infinite;
+  --animate-brush: brush 1.4s cubic-bezier(0.65, 0, 0.35, 1) both;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* ============================================================
+   KEYFRAMES
+   ============================================================ */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes ink-in {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(2%, -3%, 0) scale(1.06);
+  }
+}
+
+@keyframes sway {
+  0%,
+  100% {
+    transform: rotate(-2.5deg);
+  }
+  50% {
+    transform: rotate(2.5deg);
+  }
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes brush {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* ============================================================
+   PODSTAWA
+   ============================================================ */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+    /* Zapas pod przyklejony pasek nawigacji. Na `html` (a nie na samych
+       sekcjach), bo działa też przy przewijaniu tabulatorem — przeglądarka
+       używa wtedy scrollIntoView i bez tego fokusowany element ląduje
+       schowany pod paskiem. */
+    scroll-padding-top: 5.5rem;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-feature-settings: "kern", "liga", "calt";
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+
+  /* Stopka kontaktowa jest `footer`, a nie `section` — dlatego selektor
+     obejmuje oba, inaczej skok do #kontakt wjeżdża pod pasek. */
+  [id]:is(section, footer, main) {
+    scroll-margin-top: 5.5rem;
+  }
+
+  ::selection {
+    background-color: color-mix(in oklab, var(--color-vermilion) 26%, transparent);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-vermilion);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Cynober na lace daje tylko 2,57:1 — poniżej progu 3:1 z WCAG 1.4.11
+     dla elementów nietekstowych. Na ciemnych materiałach obrys przechodzi
+     w jasne złoto (7,1:1). */
+  .lacquer-field :focus-visible,
+  .ink-field :focus-visible {
+    outline-color: var(--color-gold-light);
+  }
+
+  /* Dyscyplina Wu: kto prosi o mniej ruchu, dostaje mniej ruchu. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ============================================================
+   TEKSTURY I TŁA
+   ============================================================ */
+
+@utility paper-grain {
+  position: relative;
+}
+
+/* Ziarno papieru ryżowego — nakładka szumu, nie obraz rastrowy.
+   `z-index: -1` w połączeniu z `isolate` na sekcji trzyma ziarno POD treścią:
+   papier dostaje fakturę, litery zostają czyste. */
+@utility grain-overlay {
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.32;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.42'/%3E%3C/svg%3E");
+  }
+}
+
+/* Czerwona mgła — sygnaturowe tło plakatu festiwalu. */
+@utility mist-red {
+  background-image:
+    radial-gradient(
+      ellipse 70% 55% at 78% 8%,
+      color-mix(in oklab, var(--color-vermilion) 26%, transparent) 0%,
+      transparent 62%
+    ),
+    radial-gradient(
+      ellipse 60% 50% at 6% 88%,
+      color-mix(in oklab, var(--color-paper-blush) 88%, transparent) 0%,
+      transparent 66%
+    ),
+    linear-gradient(
+      175deg,
+      var(--color-paper) 0%,
+      var(--color-paper-warm) 46%,
+      var(--color-paper-blush) 100%
+    );
+}
+
+/* Laka — ciemne sekcje: głęboka czerwień z ciepłym środkiem. */
+@utility lacquer-field {
+  background-image:
+    radial-gradient(
+      ellipse 80% 60% at 50% 0%,
+      color-mix(in oklab, var(--color-crimson) 70%, transparent) 0%,
+      transparent 68%
+    ),
+    linear-gradient(
+      180deg,
+      var(--color-lacquer) 0%,
+      var(--color-lacquer-deep) 100%
+    );
+}
+
+/* Tusz — najciemniejsze sekcje, nocny dziedziniec. */
+@utility ink-field {
+  background-image:
+    radial-gradient(
+      ellipse 70% 50% at 22% 12%,
+      color-mix(in oklab, var(--color-crimson) 34%, transparent) 0%,
+      transparent 64%
+    ),
+    linear-gradient(165deg, #221f1e 0%, var(--color-ink) 58%, #0f0d0d 100%);
+}
+
+/* ============================================================
+   ZŁOTE I TUSZOWE KRAWĘDZIE
+   ============================================================ */
+
+@utility rule-gold {
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--color-gold) 70%, transparent) 18%,
+    var(--color-gold) 50%,
+    color-mix(in oklab, var(--color-gold) 70%, transparent) 82%,
+    transparent
+  );
+}
+
+@utility rule-ink {
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--color-ink) 45%, transparent) 20%,
+    color-mix(in oklab, var(--color-ink) 62%, transparent) 50%,
+    color-mix(in oklab, var(--color-ink) 45%, transparent) 80%,
+    transparent
+  );
+}
+
+/* Tekst kreślony złotym pociągnięciem pędzla. */
+@utility text-gold-leaf {
+  background-image: linear-gradient(
+    118deg,
+    var(--color-gold-deep) 0%,
+    var(--color-gold-light) 34%,
+    var(--color-gold) 58%,
+    var(--color-gold-light) 78%,
+    var(--color-gold-deep) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* ============================================================
+   ORNAMENT 回纹 — meander, klasyczna chińska bordiura
+   ============================================================ */
+
+@utility meander-band {
+  background-image: repeating-linear-gradient(
+    90deg,
+    currentColor 0 2px,
+    transparent 2px 8px
+  ),
+    repeating-linear-gradient(90deg, currentColor 0 8px, transparent 8px 16px);
+  background-size:
+    16px 100%,
+    16px 3px;
+  background-position:
+    0 0,
+    0 50%;
+  background-repeat: repeat-x;
+}
+
+/* ============================================================
+   POMOCNICZE
+   ============================================================ */
+
+/* Pionowy tekst — używany przy chińskich znakach w ornamentach. */
+@utility vertical-cjk {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-family: var(--font-cjk);
+}
+
+/* Ukrycie paska przewijania w karuzelach, bez utraty przewijania. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
