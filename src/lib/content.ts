@@ -494,12 +494,7 @@ export const stream = {
 	live: "Na żywo",
 	title: "Transmisja na żywo",
 	subtitle: `Scena główna · ${event.venue}`,
-	placeholder: "Miejsce na ramkę YouTube",
-	offlineNote:
-		"Transmisja startuje 24 października o 10:00. Tutaj pojawi się odtwarzacz YouTube.",
-	/* Gotowe etykiety zamiast doklejania odmiany wyrażeniem regularnym.
-	   Reguła `replace(/ja$/, "ję")` działała tylko dopóki etykieta kończyła
-	   się na „-ja” — każda zmiana słowa cicho psuła polszczyznę. */
+	placeholder: "Miejsce na live YouTube",
 	showLabel: "Pokaż transmisję",
 	hideLabel: "Ukryj transmisję",
 } as const;
