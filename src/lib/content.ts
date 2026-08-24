@@ -247,7 +247,6 @@ export const workshopsCopy = {
 
 export const locationCopy = {
 	lead: "Sala sportowa SP nr 18 — kwadrans autobusem z Rynku, wejście z poziomu ulicy. Otwarte w oba dni festiwalu.",
-	mapCaption: "Poglądowy plan okolicy. Dokładna lokalizacja:",
 	mapsLabel: "Otwórz w Mapach Google",
 	hoursTitle: "Godziny otwarcia",
 } as const;
