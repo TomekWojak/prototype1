@@ -36,8 +36,7 @@ export default function VideoDock() {
 			   tabulacji, gdy otwarte jest menu mobilne — dok leży poza main
 			   i footer, więc sam selektor landmarków by go nie objął. */
 			data-nakladka
-			className="pointer-events-none fixed right-0 bottom-0 z-50 flex flex-col items-end p-4 sm:p-6"
-		>
+			className="pointer-events-none fixed right-0 bottom-0 z-50 flex flex-col items-end p-4 sm:p-6">
 			{/* PANEL — wysuwa się nad przyciskiem, dlatego stoi w drzewie przed nim. */}
 			<div
 				id={PANEL_ID}
@@ -116,13 +115,6 @@ export default function VideoDock() {
 						</p>
 					</div>
 				</div>
-
-				{/* Nota o starcie transmisji — czyta ją też ktoś, kto trafia na panel
-				    przed festiwalem. Przy tym stopniu pisma /45 dawało 4,24:1,
-				    więc jaśniejszy tusz i większy stopień. */}
-				<p className="border-t border-gold/20 bg-lacquer px-4 py-3 text-xs leading-relaxed text-paper/70">
-					{stream.offlineNote}
-				</p>
 			</div>
 
 			{/* PRZYCISK — jedyny stale widoczny element nakładki, więc zwinięty musi
