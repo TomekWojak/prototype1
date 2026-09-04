@@ -1,18 +1,22 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Lato, Tinos } from "next/font/google";
 import "./globals.css";
 
-/* Playfair Display — szeryfowy krój tytułowy, odpowiednik eleganckiej
-   typografii z plakatu. `latin-ext` jest konieczny dla ą/ć/ę/ł/ń/ś/ź/ż. */
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+/* Tinos — nagłówki. Metrycznie zgodny z Times New Roman, którego używa
+   chen.rzeszow.pl. Spokojny szeryf bez „projektanckiego” charakteru:
+   Playfair, którego było tu wcześniej, czytał się jako krój z szablonu. */
+const tinos = Tinos({
+  variable: "--font-tinos",
+  weight: ["400", "700"],
   subsets: ["latin", "latin-ext"],
   display: "swap",
 });
 
-/* Inter — tekst bieżący. Wysoka czytelność przy małych stopniach pisma. */
-const inter = Inter({
-  variable: "--font-inter",
+/* Lato — dokładnie ten sam krój tekstowy co na stronie stowarzyszenia,
+   żeby obie witryny czytały się jako jedna rodzina. */
+const lato = Lato({
+  variable: "--font-lato",
+  weight: ["300", "400", "700"],
   subsets: ["latin", "latin-ext"],
   display: "swap",
 });
@@ -49,7 +53,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#5e100e",
+  themeColor: "#ffffff",
   colorScheme: "light",
 };
 
@@ -57,9 +61,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="pl"
-      className={`${playfair.variable} ${inter.variable} h-full antialiased`}
+      className={`${tinos.variable} ${lato.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-paper text-ink">
+      <body className="min-h-full flex flex-col bg-paper text-ink-soft">
         {children}
       </body>
     </html>

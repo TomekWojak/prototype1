@@ -2,122 +2,108 @@
 
 /* ============================================================
    FESTIWAL „KSIĘGA I MIECZ” — WEN & WU
-   System wizualny: papier ryżowy, tusz sumi, cynober, złoto laki.
-   Wszystkie tokeny są celowo nazwane po materiałach, nie po roli —
-   dzięki temu sekcja „ciemna” zawsze znaczy to samo w całym serwisie.
+
+   Kierunek: cisza. Biała przestrzeń, czarny tusz, jedna czerwień
+   pieczęci. Punkt odniesienia — chen.rzeszow.pl: strona stoi na
+   przestrzeni i typografii, nie na ozdobnikach.
+
+   Czego tu celowo NIE MA: gradientowych teł, ziarna papieru,
+   ciemnych sekcji, złota, bordiur, wzorów. Każdy z tych elementów
+   z osobna wygląda nieźle — dopiero razem dają wrażenie szablonu.
    ============================================================ */
 
 @theme {
-  /* ── Papier i tusz ─────────────────────────────────────── */
-  --color-paper: #fbf6f1;
-  --color-paper-warm: #f5eae0;
-  --color-paper-blush: #f3dcdf;
-  --color-ink: #1b1918;
-  --color-ink-soft: #423b38;
-  /* Przyciemnione z #7a6f69: na papierze dawało 4,43:1, czyli tuż pod
-     progiem WCAG AA (4,5:1) dla tekstu drobnego — a `ink-muted` trafia
-     głównie na metadane i drobny druk. Teraz 5,6:1. */
-  --color-ink-muted: #6a605a;
-  --color-ink-faint: #b8aba3;
+  /* ── Kolory: biel, tusz, pieczęć ────────────────────────
+     Dziewięć wartości na cały serwis. Szarości tekstu wprost
+     z chen.rzeszow.pl (#333 główny, #666 drugorzędny). */
+  --color-paper: #ffffff;
+  --color-paper-soft: #f7f6f4;
 
-  /* ── Cynober i czerwień laki ───────────────────────────── */
-  --color-vermilion: #c8352b;
-  --color-vermilion-soft: #e0685c;
-  /* Przyciemnione z #a8221c. Na czystym papierze stara wartość dawała 6,5:1,
-     ale w najciemniejszym punkcie gradientu Hero spadała do 4,36:1 — tuż pod
-     progiem AA. Różnica jest niewidoczna gołym okiem, a kontrast przechodzi
-     w każdym punkcie tła. */
-  --color-seal: #9e1f19;
-  --color-crimson: #8e1b18;
-  --color-lacquer: #5e100e;
-  --color-lacquer-deep: #380807;
+  --color-ink: #1a1a1a;
+  --color-ink-soft: #333333;
+  --color-ink-muted: #666666;
+  /* Przyciemnione z #8f8b87, które dawało 3,1:1 na złamanej bieli — poniżej
+     progu AA. Token mial byc tylko do kresek i podpisów, ale w praktyce trafia
+     na tekst (pinyin, listy cech, etykiety), więc musi go unieść. Teraz 4,8:1,
+     nadal o stopień jaśniejszy od `ink-muted`. */
+  --color-ink-faint: #6f6c69;
 
-  /* ── Złoto ─────────────────────────────────────────────── */
-  --color-gold: #d4a537;
-  --color-gold-light: #f0d492;
-  --color-gold-deep: #96701a;
+  --color-line: #e4e1dd;
 
-  /* ── Jadeit — jedyny zimny akcent, używany oszczędnie ──── */
-  --color-jade: #4b7a65;
+  --color-seal: #c21c20;
+  --color-vermilion: #e34234;
 
-  /* ── Typografia ────────────────────────────────────────── */
-  --font-display: var(--font-playfair), "Playfair Display", "Georgia", serif;
-  --font-body: var(--font-inter), "Inter", system-ui, -apple-system, sans-serif;
+  /* ── Typografia ──────────────────────────────────────────
+     Lato jak w referencji, szeryfowy Tinos na nagłówki
+     (metrycznie zgodny z Times New Roman, którego używa
+     chen.rzeszow.pl). */
+  --font-display: var(--font-tinos), "Tinos", "Times New Roman", serif;
+  --font-body: var(--font-lato), "Lato", "Helvetica Neue", Arial, sans-serif;
   --font-cjk: "Noto Serif SC", "Source Han Serif SC", "Songti SC", STSong,
     SimSun, "Microsoft YaHei", serif;
 
-  /* ── Cienie ────────────────────────────────────────────── */
-  --shadow-paper: 0 1px 2px rgb(27 25 24 / 0.04),
-    0 10px 28px -14px rgb(27 25 24 / 0.16);
-  --shadow-lift: 0 2px 4px rgb(27 25 24 / 0.05),
-    0 22px 48px -22px rgb(94 16 14 / 0.32);
-  --shadow-lacquer: 0 20px 56px -24px rgb(0 0 0 / 0.72);
-  --shadow-seal: 0 0 0 1px rgb(168 34 28 / 0.28),
-    0 6px 18px -8px rgb(168 34 28 / 0.4);
+  /* ── Skala pisma ─────────────────────────────────────────
+     Podniesiona o jeden stopień względem domyślnej Tailwinda:
+     `text-base` to 18 px, a nie 16, a najmniejszy dopuszczalny
+     stopień (`text-xs`) to 15 px, nie 12. Dzięki temu poprawka
+     „za mała czcionka” działa wszędzie naraz, także w etykietach,
+     które wcześniej schodziły do 11 px. */
+  --text-xs: 0.9375rem; /* 15 px — twarda dolna granica */
+  --text-xs--line-height: 1.6;
+  --text-sm: 1rem; /* 16 */
+  --text-sm--line-height: 1.65;
+  --text-base: 1.125rem; /* 18 */
+  --text-base--line-height: 1.75;
+  --text-lg: 1.25rem; /* 20 */
+  --text-lg--line-height: 1.7;
+  --text-xl: 1.5rem; /* 24 */
+  --text-xl--line-height: 1.5;
+  --text-2xl: 1.75rem; /* 28 — h3 jak w referencji */
+  --text-2xl--line-height: 1.4;
+  --text-3xl: 2.125rem; /* 34 */
+  --text-3xl--line-height: 1.3;
+  --text-4xl: 2.5rem; /* 40 — h2 jak w referencji */
+  --text-4xl--line-height: 1.2;
+  --text-5xl: 3.25rem; /* 52 */
+  --text-5xl--line-height: 1.12;
+  --text-6xl: 4rem; /* 64 */
+  --text-6xl--line-height: 1.06;
+  --text-7xl: 5.5rem; /* 88 */
+  --text-7xl--line-height: 1;
+  --text-8xl: 7rem; /* 112 */
+  --text-8xl--line-height: 0.96;
 
-  /* ── Animacje ──────────────────────────────────────────── */
-  --animate-ink-in: ink-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
-  --animate-drift: drift 22s ease-in-out infinite;
-  --animate-sway: sway 7s ease-in-out infinite;
-  --animate-breathe: breathe 5s ease-in-out infinite;
-  --animate-brush: brush 1.4s cubic-bezier(0.65, 0, 0.35, 1) both;
+  /* ── Cień ────────────────────────────────────────────────
+     Jeden, ledwie widoczny. Karty z cieniami to pierwszy krok
+     w stronę szablonu, więc używamy go wyłącznie tam, gdzie coś
+     naprawdę unosi się nad stroną (panel transmisji). */
+  --shadow-float: 0 1px 2px rgb(0 0 0 / 0.04),
+    0 18px 44px -20px rgb(0 0 0 / 0.28);
+
+  /* ── Animacje ────────────────────────────────────────────
+     Zostały dwie i obie są powolne. */
+  --animate-ink-in: ink-in 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-breathe: breathe 6s ease-in-out infinite;
 }
-
-/* ============================================================
-   KEYFRAMES
-   ============================================================ */
 
 @keyframes ink-in {
   from {
     opacity: 0;
-    transform: translateY(1.25rem);
-    filter: blur(6px);
+    transform: translateY(0.75rem);
   }
   to {
     opacity: 1;
     transform: none;
-    filter: blur(0);
-  }
-}
-
-@keyframes drift {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(2%, -3%, 0) scale(1.06);
-  }
-}
-
-@keyframes sway {
-  0%,
-  100% {
-    transform: rotate(-2.5deg);
-  }
-  50% {
-    transform: rotate(2.5deg);
   }
 }
 
 @keyframes breathe {
   0%,
   100% {
-    opacity: 0.45;
-    transform: scale(1);
+    opacity: 0.55;
   }
   50% {
-    opacity: 0.85;
-    transform: scale(1.04);
-  }
-}
-
-@keyframes brush {
-  from {
-    clip-path: inset(0 100% 0 0);
-  }
-  to {
-    clip-path: inset(0 0 0 0);
+    opacity: 0.9;
   }
 }
 
@@ -128,49 +114,44 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
     -webkit-tap-highlight-color: transparent;
-    /* Zapas pod przyklejony pasek nawigacji. Na `html` (a nie na samych
-       sekcjach), bo działa też przy przewijaniu tabulatorem — przeglądarka
-       używa wtedy scrollIntoView i bez tego fokusowany element ląduje
-       schowany pod paskiem. */
-    scroll-padding-top: 5.5rem;
   }
 
   body {
     background-color: var(--color-paper);
-    color: var(--color-ink);
+    color: var(--color-ink-soft);
     font-family: var(--font-body);
-    font-feature-settings: "kern", "liga", "calt";
+    font-size: var(--text-base);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     overflow-x: clip;
   }
 
-  /* Stopka kontaktowa jest `footer`, a nie `section` — dlatego selektor
-     obejmuje oba, inaczej skok do #kontakt wjeżdża pod pasek. */
   [id]:is(section, footer, main) {
-    scroll-margin-top: 5.5rem;
+    scroll-margin-top: 6rem;
+  }
+
+  /* Nagłówki: szeryf, ciemny tusz, ciasna interlinia. */
+  :is(h1, h2, h3, h4) {
+    font-family: var(--font-display);
+    color: var(--color-ink);
+    font-weight: 700;
+    text-wrap: balance;
   }
 
   ::selection {
-    background-color: color-mix(in oklab, var(--color-vermilion) 26%, transparent);
+    background-color: color-mix(in oklab, var(--color-seal) 20%, transparent);
     color: var(--color-ink);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-vermilion);
+    outline: 2px solid var(--color-seal);
     outline-offset: 3px;
-    border-radius: 2px;
+    border-radius: 1px;
   }
 
-  /* Cynober na lace daje tylko 2,57:1 — poniżej progu 3:1 z WCAG 1.4.11
-     dla elementów nietekstowych. Na ciemnych materiałach obrys przechodzi
-     w jasne złoto (7,1:1). */
-  .lacquer-field :focus-visible,
-  .ink-field :focus-visible {
-    outline-color: var(--color-gold-light);
-  }
-
-  /* Dyscyplina Wu: kto prosi o mniej ruchu, dostaje mniej ruchu. */
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
@@ -186,149 +167,28 @@
 }
 
 /* ============================================================
-   TEKSTURY I TŁA
+   NIELICZNE POMOCNIKI
+   Zostały tylko te, które naprawdę są używane więcej niż raz.
    ============================================================ */
 
-@utility paper-grain {
-  position: relative;
-}
-
-/* Ziarno papieru ryżowego — nakładka szumu, nie obraz rastrowy.
-   `z-index: -1` w połączeniu z `isolate` na sekcji trzyma ziarno POD treścią:
-   papier dostaje fakturę, litery zostają czyste. */
-@utility grain-overlay {
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    opacity: 0.32;
-    mix-blend-mode: multiply;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.42'/%3E%3C/svg%3E");
-  }
-}
-
-/* Czerwona mgła — sygnaturowe tło plakatu festiwalu. */
-@utility mist-red {
-  background-image:
-    radial-gradient(
-      ellipse 70% 55% at 78% 8%,
-      color-mix(in oklab, var(--color-vermilion) 26%, transparent) 0%,
-      transparent 62%
-    ),
-    radial-gradient(
-      ellipse 60% 50% at 6% 88%,
-      color-mix(in oklab, var(--color-paper-blush) 88%, transparent) 0%,
-      transparent 66%
-    ),
-    linear-gradient(
-      175deg,
-      var(--color-paper) 0%,
-      var(--color-paper-warm) 46%,
-      var(--color-paper-blush) 100%
-    );
-}
-
-/* Laka — ciemne sekcje: głęboka czerwień z ciepłym środkiem. */
-@utility lacquer-field {
-  background-image:
-    radial-gradient(
-      ellipse 80% 60% at 50% 0%,
-      color-mix(in oklab, var(--color-crimson) 70%, transparent) 0%,
-      transparent 68%
-    ),
-    linear-gradient(
-      180deg,
-      var(--color-lacquer) 0%,
-      var(--color-lacquer-deep) 100%
-    );
-}
-
-/* Tusz — najciemniejsze sekcje, nocny dziedziniec. */
-@utility ink-field {
-  background-image:
-    radial-gradient(
-      ellipse 70% 50% at 22% 12%,
-      color-mix(in oklab, var(--color-crimson) 34%, transparent) 0%,
-      transparent 64%
-    ),
-    linear-gradient(165deg, #221f1e 0%, var(--color-ink) 58%, #0f0d0d 100%);
-}
-
-/* ============================================================
-   ZŁOTE I TUSZOWE KRAWĘDZIE
-   ============================================================ */
-
-@utility rule-gold {
-  background-image: linear-gradient(
-    90deg,
-    transparent,
-    color-mix(in oklab, var(--color-gold) 70%, transparent) 18%,
-    var(--color-gold) 50%,
-    color-mix(in oklab, var(--color-gold) 70%, transparent) 82%,
-    transparent
-  );
-}
-
+/* Cienka kreska tuszem — jedyny separator w całym serwisie. */
 @utility rule-ink {
   background-image: linear-gradient(
     90deg,
     transparent,
-    color-mix(in oklab, var(--color-ink) 45%, transparent) 20%,
-    color-mix(in oklab, var(--color-ink) 62%, transparent) 50%,
-    color-mix(in oklab, var(--color-ink) 45%, transparent) 80%,
+    var(--color-line) 12%,
+    var(--color-line) 88%,
     transparent
   );
 }
 
-/* Tekst kreślony złotym pociągnięciem pędzla. */
-@utility text-gold-leaf {
-  background-image: linear-gradient(
-    118deg,
-    var(--color-gold-deep) 0%,
-    var(--color-gold-light) 34%,
-    var(--color-gold) 58%,
-    var(--color-gold-light) 78%,
-    var(--color-gold-deep) 100%
-  );
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-}
-
-/* ============================================================
-   ORNAMENT 回纹 — meander, klasyczna chińska bordiura
-   ============================================================ */
-
-@utility meander-band {
-  background-image: repeating-linear-gradient(
-    90deg,
-    currentColor 0 2px,
-    transparent 2px 8px
-  ),
-    repeating-linear-gradient(90deg, currentColor 0 8px, transparent 8px 16px);
-  background-size:
-    16px 100%,
-    16px 3px;
-  background-position:
-    0 0,
-    0 50%;
-  background-repeat: repeat-x;
-}
-
-/* ============================================================
-   POMOCNICZE
-   ============================================================ */
-
-/* Pionowy tekst — używany przy chińskich znakach w ornamentach. */
+/* Pionowa kolumna znaków chińskich — jak podpis na zwoju. */
 @utility vertical-cjk {
   writing-mode: vertical-rl;
   text-orientation: upright;
   font-family: var(--font-cjk);
 }
 
-/* Ukrycie paska przewijania w karuzelach, bez utraty przewijania. */
 @utility no-scrollbar {
   scrollbar-width: none;
   -ms-overflow-style: none;

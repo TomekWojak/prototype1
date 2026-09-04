@@ -1,43 +1,27 @@
-import { EnsoRing, PetalDrift } from "@/components/ornaments";
 import {
   Button,
-  Card,
-  CjkGlyph,
   Container,
   Section,
   SectionHeading,
 } from "@/components/ui";
-import { contact, faq, faqCopy } from "@/lib/content";
+import { faq, faqCopy } from "@/lib/content";
 
-/* Treść merytoryczna sekcji (lead, wezwanie do kontaktu) mieszka w
-   `faqCopy` w content.ts — razem z pytaniami, których dotyczy. Tutaj zostają
-   wyłącznie etykiety kompozycyjne: nadkreślenie i rozbity na dwa człony
-   tytuł, których nie da się zapisać jako zwykły łańcuch znaków. */
+/* Treść merytoryczna sekcji (lead, wezwanie do kontaktu) mieszka w `faqCopy`
+   w content.ts — razem z pytaniami, których dotyczy. Tutaj zostają wyłącznie
+   etykiety kompozycyjne: nadkreślenie i rozbity na dwa człony tytuł, którego
+   nie da się zapisać jako zwykły łańcuch znaków. */
 const copy = {
   eyebrow: "Pytania i odpowiedzi",
-  cjk: "問答",
   titleMain: "Najczęstsze",
   titleAccent: "pytania",
-  ctaLead:
-    "Odpowiadamy w ciągu dwóch dni roboczych — także na pytania szkół, grup zorganizowanych i partnerów.",
-  ctaMailPrefix: "Albo napisz wprost na adres",
 } as const;
 
-/* Numeracja pytań chińskimi cyframi to ornament typograficzny, nie treść —
-   dlatego mieszka w komponencie i nie trafia do drzewa dostępności. */
-const numerals = [
-  "一",
-  "二",
-  "三",
-  "四",
-  "五",
-  "六",
-  "七",
-  "八",
-  "九",
-] as const;
-
-/** Wskaźnik rozwinięcia: plus, który przy otwarciu obraca się w minus. */
+/**
+ * Wskaźnik rozwinięcia: plus, który przy otwarciu obraca się w minus.
+ *
+ * Sam znak, bez kółka i obramowania — kółko z ramką przy każdym z dziewięciu
+ * pytań robiło z listy zestaw kontrolek, a nie spis treści.
+ */
 function PlusMark({ className }: { className?: string }) {
   return (
     <svg
@@ -47,11 +31,11 @@ function PlusMark({ className }: { className?: string }) {
       focusable="false"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.6"
+      strokeWidth="1.4"
       strokeLinecap="round"
     >
-      <path d="M8 2.8V13.2" />
-      <path d="M2.8 8H13.2" />
+      <path d="M8 2.4V13.6" />
+      <path d="M2.4 8H13.6" />
     </svg>
   );
 }
@@ -66,91 +50,54 @@ function PlusMark({ className }: { className?: string }) {
  */
 export default function Faq() {
   return (
-    <Section id="faq" tone="paperWarm" labelledBy="faq-tytul">
-      {/* Warstwa ornamentów — ujemny z-index trzyma ją pod treścią, a brak
-          zdarzeń wskaźnika pozwala klikać pytania na całej szerokości. */}
-      <EnsoRing className="pointer-events-none absolute top-1/4 -left-32 -z-10 hidden h-96 w-96 text-ink opacity-[0.06] lg:block" />
-      <PetalDrift className="pointer-events-none absolute inset-0 -z-10 h-full w-full text-vermilion opacity-[0.15]" />
-
+    <Section id="faq" tone="soft" labelledBy="faq-tytul">
+      {/* Bez ornamentu. Enso stoi teraz w sekcji otwierającej jako pełnoprawny
+          element kompozycji — powtórzone tutaj przy kryciu 0,05 było ledwie
+          szarą plamą, czyli dokładnie tym, za co klient odrzucił poprzednią
+          wersję. Jeden gest na stronę wystarczy. */}
       <Container className="relative">
         <SectionHeading
           id="faq-tytul"
           eyebrow={copy.eyebrow}
-          cjk={copy.cjk}
-          tone="paperWarm"
           align="center"
           title={
             <>
               {copy.titleMain}{" "}
-              <span className="text-vermilion">{copy.titleAccent}</span>
+              <span className="text-seal">{copy.titleAccent}</span>
             </>
           }
           lead={faqCopy.lead}
         />
 
-        {/* ── AKORDEON ───────────────────────────────────────── */}
-        <div className="mx-auto mt-14 max-w-3xl divide-y divide-ink/10 border-y border-ink/10 sm:mt-16">
-          {faq.map((item, index) => (
+        {/* ── AKORDEON ───────────────────────────────────────────
+            Cienkie kreski między pozycjami i po zewnętrznej stronie listy —
+            żadnych kart, ramek ani teł. Podział widać, a strona zostaje
+            jednym arkuszem papieru. */}
+        <div className="mx-auto mt-20 max-w-3xl divide-y divide-line border-y border-line">
+          {faq.map((item) => (
             <details key={item.q} className="group">
-              <summary className="flex cursor-pointer list-none items-start justify-between gap-5 py-5 text-left font-display text-lg text-ink transition-colors hover:text-vermilion sm:text-xl [&::-webkit-details-marker]:hidden">
-                <span className="flex items-start gap-3.5 sm:gap-4">
-                  <CjkGlyph className="mt-1.5 shrink-0 text-sm text-seal/40 sm:text-base">
-                    {numerals[index % numerals.length]}
-                  </CjkGlyph>
-                  <span className="text-balance">{item.q}</span>
-                </span>
+              <summary className="flex cursor-pointer list-none items-start justify-between gap-6 py-7 text-left font-display text-xl text-ink transition-colors hover:text-seal [&::-webkit-details-marker]:hidden">
+                <span className="text-balance">{item.q}</span>
 
-                <span
-                  aria-hidden="true"
-                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-seal/30 transition-colors duration-300 group-hover:border-vermilion/60 group-open:border-seal/60"
-                >
-                  <PlusMark className="h-3.5 w-3.5 transition-transform duration-300 group-open:rotate-45" />
-                </span>
+                <PlusMark className="mt-2 h-5 w-5 shrink-0 text-ink-faint transition-transform duration-300 group-open:rotate-45" />
               </summary>
 
-              {/* Wcięcie odpowiedzi równa się szerokości glifu numeracji plus
-                  odstęp z <summary> — pytanie i odpowiedź stoją na jednej osi,
-                  zamiast rozjeżdżać się o 28 px. */}
-              <div className="pb-6 pl-[2.1rem] pr-12 leading-relaxed text-ink-soft sm:pl-9">
+              <div className="pb-7 pr-10 text-base text-ink-muted">
                 {item.a}
               </div>
             </details>
           ))}
         </div>
 
-        {/* ── ZAPROSZENIE DO KONTAKTU ────────────────────────── */}
-        <div className="mx-auto mt-14 max-w-2xl sm:mt-16">
-          <Card tone="paperWarm" className="text-center">
-            <CjkGlyph className="pointer-events-none absolute -right-3 -bottom-6 text-8xl text-seal/10 transition-colors duration-300 group-hover:text-seal/20">
-              問
-            </CjkGlyph>
+        {/* ── ZAPROSZENIE DO KONTAKTU ────────────────────────────
+            Bez karty i bez ramki: wystarczy odstęp i kontrast wielkości
+            między nagłówkiem a przyciskiem. */}
+        <div className="mt-16 text-center">
+          <h3 className="text-2xl">{faqCopy.ctaTitle}</h3>
 
-            <div className="relative flex flex-col items-center gap-4">
-              <h3 className="font-display text-2xl leading-snug text-balance text-ink sm:text-3xl">
-                {faqCopy.ctaTitle}
-              </h3>
-
-              <p className="max-w-md text-sm leading-relaxed text-pretty text-ink-soft">
-                {copy.ctaLead}
-              </p>
-
-              <Button href="#kontakt" variant="outline" className="mt-1">
-                {faqCopy.ctaLabel}
-              </Button>
-
-              {/* `text-ink-muted` daje na papierze ciepłym 4,12:1 — poniżej
-                  progu AA dla tekstu tej wielkości. Stąd `text-ink-soft`. */}
-              <p className="text-sm text-ink-soft">
-                {copy.ctaMailPrefix}{" "}
-                <a
-                  href={`mailto:${contact.email}`}
-                  className="font-semibold text-seal underline decoration-seal/40 underline-offset-4 transition-colors hover:text-vermilion hover:decoration-vermilion/60"
-                >
-                  {contact.email}
-                </a>
-              </p>
-            </div>
-          </Card>
+          <Button href="#kontakt" variant="outline" className="mt-6">
+            {faqCopy.ctaLabel}
+          </Button>
         </div>
       </Container>
     </Section>

@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { InkSun, MeanderCorner, SealStamp } from "@/components/ornaments";
+import { SealStamp } from "@/components/ornaments";
 import {
 	Button,
 	Container,
+	InkRule,
 	Section,
 	SectionHeading,
 	cx,
@@ -74,7 +75,6 @@ function errorId(name: FieldName) {
    obiekcie, żeby tłumacz albo korektor nie musiał szukać ich po JSX. */
 const ui = {
 	requiredHint: "Wszystkie pola są wymagane.",
-	requiredMark: "pole wymagane",
 	summaryTitle: "Nie możemy jeszcze wysłać zgłoszenia:",
 	summaryHint: "Kliknij pozycję z listy, aby przejść do pola.",
 	howTitle: "Jak to działa",
@@ -140,7 +140,7 @@ function validateField(name: FieldName, raw: string): string | null {
 }
 
 /* ============================================================
-   IKONY — rysowane inline, bo są maleńkie i zależne od kontekstu
+   IKONA — rysowana inline, bo jest maleńka i zależna od kontekstu
    ============================================================ */
 
 function AlertIcon({ className }: { className?: string }) {
@@ -169,44 +169,6 @@ function AlertIcon({ className }: { className?: string }) {
 	);
 }
 
-function CalendarIcon({ className }: { className?: string }) {
-	return (
-		<svg
-			viewBox="0 0 20 20"
-			className={className}
-			aria-hidden="true"
-			focusable="false">
-			<g fill="none" stroke="currentColor" strokeWidth="1.4">
-				<rect x="2.6" y="4.4" width="14.8" height="13" rx="1.6" />
-				<path d="M2.6 8.4 H17.4" />
-				<path d="M6.6 2.6 V5.6" strokeLinecap="round" />
-				<path d="M13.4 2.6 V5.6" strokeLinecap="round" />
-			</g>
-			<circle cx="7" cy="12" r="1.1" fill="currentColor" />
-			<circle cx="13" cy="12" r="1.1" fill="currentColor" />
-		</svg>
-	);
-}
-
-function PinIcon({ className }: { className?: string }) {
-	return (
-		<svg
-			viewBox="0 0 20 20"
-			className={className}
-			aria-hidden="true"
-			focusable="false">
-			<path
-				d="M10 18 C10 18 16 11.6 16 8 A6 6 0 1 0 4 8 C4 11.6 10 18 10 18 Z"
-				fill="none"
-				stroke="currentColor"
-				strokeWidth="1.4"
-				strokeLinejoin="round"
-			/>
-			<circle cx="10" cy="8" r="2.2" fill="currentColor" />
-		</svg>
-	);
-}
-
 /* ============================================================
    KOMUNIKAT BŁĘDU
    Kolor nie może być jedynym nośnikiem informacji — dlatego obok
@@ -215,10 +177,8 @@ function PinIcon({ className }: { className?: string }) {
 
 function FieldError({ id, message }: { id: string; message: string }) {
 	return (
-		<p
-			id={id}
-			className="mt-2 flex items-start gap-1.5 text-[0.8rem] leading-snug text-seal">
-			<AlertIcon className="mt-0.5 h-4 w-4 shrink-0" />
+		<p id={id} className="mt-2.5 flex items-start gap-2 text-sm text-seal">
+			<AlertIcon className="mt-1 h-4 w-4 shrink-0" />
 			<span>{message}</span>
 		</p>
 	);
@@ -235,10 +195,14 @@ type Status = "idle" | "sending" | "done";
 
 const emptyValues: Values = { imie: "", nazwisko: "", email: "", telefon: "" };
 
+/* Pole to linia, nie ramka. Cała ozdoba inputu sprowadza się do jednej
+   kreski u dołu, która na fokusie zmienia kolor na pieczęć — obrys
+   `:focus-visible` z globals.css zostaje nietknięty, bo to on niesie
+   informację o fokusie dla osób korzystających z klawiatury. */
 const inputBase =
-	"w-full rounded-sm bg-paper px-4 py-3.5 text-ink placeholder:text-ink-muted transition-colors focus:border-vermilion focus:ring-2 focus:ring-vermilion";
+	"w-full border-0 border-b border-line bg-transparent px-0 py-3.5 text-base text-ink placeholder:text-ink-faint transition-colors focus:border-seal";
 const labelClass =
-	"mb-2 block text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-ink-soft";
+	"block text-xs uppercase tracking-[0.18em] text-ink-muted";
 
 export default function Registration() {
 	const [values, setValues] = useState<Values>(emptyValues);
@@ -348,82 +312,102 @@ export default function Registration() {
 		setStatus("idle");
 	}
 
+	/* Zwykła funkcja, nie komponent zagnieżdżony: gdyby to był komponent
+	   definiowany w ciele `Registration`, React montowałby inputy od nowa
+	   przy każdym naciśnięciu klawisza i fokus uciekałby z pola. */
+	function renderField(field: FieldConfig) {
+		const message = errors[field.name];
+		const describedBy = errorId(field.name);
+
+		return (
+			<div key={field.name}>
+				<label className={labelClass} htmlFor={fieldId(field.name)}>
+					{field.label}{" "}
+					<span aria-hidden="true" className="text-seal">
+						*
+					</span>
+				</label>
+				<input
+					ref={(node) => {
+						inputRefs.current[field.name] = node;
+					}}
+					id={fieldId(field.name)}
+					name={field.name}
+					type={field.type}
+					inputMode={field.inputMode}
+					autoComplete={field.autoComplete}
+					placeholder={field.placeholder}
+					required
+					value={values[field.name]}
+					onChange={(changeEvent) =>
+						handleChange(field.name, changeEvent.target.value)
+					}
+					onBlur={() => handleBlur(field.name)}
+					aria-invalid={message ? "true" : undefined}
+					aria-describedby={message ? describedBy : undefined}
+					className={cx(inputBase, message && "border-seal")}
+				/>
+				{message && <FieldError id={describedBy} message={message} />}
+			</div>
+		);
+	}
+
 	const invalidFields = fields.filter((field) => errors[field.name]);
 	const showSummary = submitted && invalidFields.length > 0;
 
 	return (
 		<Section id="zapisy" tone="paper" labelledBy="zapisy-tytul">
-			<InkSun className="pointer-events-none absolute top-10 -right-24 -z-10 h-80 w-80 text-vermilion opacity-[0.07]" />
-
 			<Container>
-				<div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr]">
+				<div className="grid gap-16 lg:grid-cols-2 lg:gap-20">
 					{/* ── Lewa kolumna: nagłówek, trzy kroki, przypomnienie ── */}
-					<div className="flex flex-col gap-10">
+					<div>
 						<SectionHeading
 							id="zapisy-tytul"
 							eyebrow={formCopy.eyebrow}
-							cjk="報名"
 							title={formCopy.title}
 							lead={formCopy.lead}
-							tone="paper"
 						/>
 
-						<div>
-							<h3 className="font-display text-2xl text-ink sm:text-3xl">
-								{ui.howTitle}
-							</h3>
+						<h3 className="mt-20 text-2xl">{ui.howTitle}</h3>
 
-							<ol className="mt-6 flex flex-col gap-5">
-								{steps.map((step, index) => (
-									<li key={step.title} className="flex gap-4">
-										<span
-											aria-hidden="true"
-											className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-seal/30 bg-paper-warm/70 font-display text-base text-seal">
-											{index + 1}
+						<ol className="mt-8">
+							{steps.map((step, index) => (
+								<li key={step.title}>
+									<InkRule />
+									<div className="flex gap-6 py-7">
+										<span aria-hidden="true" className="w-6 shrink-0 text-sm text-seal">
+											{String(index + 1).padStart(2, "0")}
 										</span>
 										<div>
-											<p className="font-semibold text-ink">{step.title}</p>
-											<p className="mt-1 text-sm leading-relaxed text-ink-muted">
+											<p className="text-base font-bold text-ink">
+												{step.title}
+											</p>
+											<p className="mt-2 text-base text-ink-muted">
 												{step.body}
 											</p>
 										</div>
-									</li>
-								))}
-							</ol>
-						</div>
+									</div>
+								</li>
+							))}
+						</ol>
 
-						<dl className="flex flex-col gap-4 border-t border-ink/10 pt-6 sm:flex-row sm:gap-10">
-							<div className="flex items-start gap-3">
-								<CalendarIcon className="mt-0.5 h-5 w-5 shrink-0 text-vermilion" />
-								<div>
-									<dt className="text-[0.68rem] font-semibold tracking-[0.22em] text-ink-muted uppercase">
-										{ui.whenLabel}
-									</dt>
-									<dd className="mt-1 text-sm font-semibold text-ink">
-										{event.dateLabel}
-									</dd>
-								</div>
+						<InkRule />
+
+						<dl className="mt-8 flex flex-col gap-3 text-sm text-ink-muted sm:flex-row sm:gap-12">
+							<div className="flex gap-3">
+								<dt className="text-ink-faint">{ui.whenLabel}</dt>
+								<dd className="text-ink-soft">{event.dateLabel}</dd>
 							</div>
-
-							<div className="flex items-start gap-3">
-								<PinIcon className="mt-0.5 h-5 w-5 shrink-0 text-vermilion" />
-								<div>
-									<dt className="text-[0.68rem] font-semibold tracking-[0.22em] text-ink-muted uppercase">
-										{ui.whereLabel}
-									</dt>
-									<dd className="mt-1 text-sm font-semibold text-ink">
-										{event.venue}
-									</dd>
-								</div>
+							<div className="flex gap-3">
+								<dt className="text-ink-faint">{ui.whereLabel}</dt>
+								<dd className="text-ink-soft">{event.venue}</dd>
 							</div>
 						</dl>
 					</div>
 
-					{/* ── Prawa kolumna: karta formularza ── */}
-					<div className="relative isolate overflow-hidden rounded-sm border border-ink/12 bg-paper-warm p-7 shadow-lift sm:p-10">
-						<MeanderCorner className="pointer-events-none absolute -top-1 -left-1 h-10 w-10 text-vermilion/25" />
-						<MeanderCorner className="pointer-events-none absolute -right-1 -bottom-1 h-10 w-10 rotate-180 text-vermilion/25" />
-
+					{/* ── Prawa kolumna: formularz. Bez karty, bez ramki, bez tła —
+					    to po prostu kolumna pól na białym papierze. ── */}
+					<div>
 						{/* Region live zamontowany NA STAŁE, poza gałęzią warunkową.
                 Wcześniej `role="status"` pojawiał się w drzewie razem ze swoją
                 treścią, a czytnik ekranu ogłasza tylko zmiany w regionie, który
@@ -436,15 +420,15 @@ export default function Registration() {
 						</p>
 
 						{status === "done" ? (
-							<div className="flex flex-col items-center gap-5 py-6 text-center">
-								<SealStamp glyph="成" className="h-20 w-20 text-seal" />
+							<div>
+								<SealStamp glyph="成" className="h-16 w-16 text-seal" />
 								<h3
 									ref={successHeadingRef}
 									tabIndex={-1}
-									className="font-display text-2xl text-ink sm:text-3xl">
+									className="mt-8 text-3xl">
 									{formCopy.successTitle}
 								</h3>
-								<p className="max-w-md leading-relaxed text-ink-soft">
+								<p className="mt-5 max-w-md text-base text-ink-muted">
 									{formCopy.successBody}
 								</p>
 								<Button
@@ -452,13 +436,13 @@ export default function Registration() {
 									variant="outline"
 									size="md"
 									onClick={handleReset}
-									className="mt-1">
+									className="mt-10">
 									{formCopy.againLabel}
 								</Button>
 							</div>
 						) : (
 							<form onSubmit={handleSubmit} noValidate>
-								<p className="text-[0.78rem] text-ink-soft">
+								<p className="text-sm text-ink-muted">
 									<span aria-hidden="true" className="text-seal">
 										*
 									</span>{" "}
@@ -466,14 +450,12 @@ export default function Registration() {
 								</p>
 
 								{showSummary && (
-									<div
-										role="alert"
-										className="mt-5 rounded-sm border border-seal/35 bg-paper-blush/60 p-4">
-										<p className="flex items-start gap-2 text-sm font-semibold text-seal">
-											<AlertIcon className="mt-0.5 h-4 w-4 shrink-0" />
+									<div role="alert" className="mt-8 border-t border-seal pt-6">
+										<p className="flex items-start gap-2 text-sm font-bold text-seal">
+											<AlertIcon className="mt-1 h-4 w-4 shrink-0" />
 											<span>{ui.summaryTitle}</span>
 										</p>
-										<ul className="mt-2 flex flex-col gap-1 pl-6">
+										<ul className="mt-3 flex flex-col gap-2 pl-6">
 											{invalidFields.map((field) => (
 												<li key={field.name}>
 													<button
@@ -481,112 +463,26 @@ export default function Registration() {
 														onClick={() =>
 															inputRefs.current[field.name]?.focus()
 														}
-														className="text-left text-sm text-ink-soft underline decoration-seal/40 underline-offset-4 transition-colors hover:text-seal hover:decoration-seal">
+														className="text-left text-sm text-ink-soft underline decoration-line underline-offset-4 transition-colors hover:text-seal hover:decoration-seal">
 														{field.label} — {errors[field.name]}
 													</button>
 												</li>
 											))}
 										</ul>
-										<p className="mt-2 pl-6 text-[0.75rem] text-ink-soft">
+										<p className="mt-3 pl-6 text-sm text-ink-faint">
 											{ui.summaryHint}
 										</p>
 									</div>
 								)}
 
-								<div className="mt-6 grid gap-5 sm:grid-cols-2">
-									{fields.slice(0, 2).map((field) => {
-										const message = errors[field.name];
-										const describedBy = errorId(field.name);
-										return (
-											<div key={field.name}>
-												<label
-													className={labelClass}
-													htmlFor={fieldId(field.name)}>
-													{field.label}{" "}
-													<span aria-hidden="true" className="text-seal">
-														*
-													</span>
-												</label>
-												<input
-													ref={(node) => {
-														inputRefs.current[field.name] = node;
-													}}
-													id={fieldId(field.name)}
-													name={field.name}
-													type={field.type}
-													autoComplete={field.autoComplete}
-													placeholder={field.placeholder}
-													required
-													value={values[field.name]}
-													onChange={(changeEvent) =>
-														handleChange(field.name, changeEvent.target.value)
-													}
-													onBlur={() => handleBlur(field.name)}
-													aria-invalid={message ? "true" : undefined}
-													aria-describedby={message ? describedBy : undefined}
-													className={cx(
-														inputBase,
-														message
-															? "border border-seal ring-1 ring-seal/30"
-															: "border border-ink/45",
-													)}
-												/>
-												{message && (
-													<FieldError id={describedBy} message={message} />
-												)}
-											</div>
-										);
-									})}
+								<div className="mt-10 space-y-8">
+									<div className="grid gap-8 sm:grid-cols-2">
+										{fields.slice(0, 2).map(renderField)}
+									</div>
+									{fields.slice(2).map(renderField)}
 								</div>
 
-								<div className="mt-5 flex flex-col gap-5">
-									{fields.slice(2).map((field) => {
-										const message = errors[field.name];
-										const describedBy = errorId(field.name);
-										return (
-											<div key={field.name}>
-												<label
-													className={labelClass}
-													htmlFor={fieldId(field.name)}>
-													{field.label}{" "}
-													<span aria-hidden="true" className="text-seal">
-														*
-													</span>
-												</label>
-												<input
-													ref={(node) => {
-														inputRefs.current[field.name] = node;
-													}}
-													id={fieldId(field.name)}
-													name={field.name}
-													type={field.type}
-													inputMode={field.inputMode}
-													autoComplete={field.autoComplete}
-													placeholder={field.placeholder}
-													required
-													value={values[field.name]}
-													onChange={(changeEvent) =>
-														handleChange(field.name, changeEvent.target.value)
-													}
-													onBlur={() => handleBlur(field.name)}
-													aria-invalid={message ? "true" : undefined}
-													aria-describedby={message ? describedBy : undefined}
-													className={cx(
-														inputBase,
-														message
-															? "border border-seal ring-1 ring-seal/30"
-															: "border border-ink/45",
-													)}
-												/>
-												{message && (
-													<FieldError id={describedBy} message={message} />
-												)}
-											</div>
-										);
-									})}
-								</div>
-
-								<div className="mt-8">
+								<div className="mt-12">
 									<Button
 										type="submit"
 										variant="solid"
@@ -602,7 +498,7 @@ export default function Registration() {
 							</form>
 						)}
 
-						<p className="mt-6 border-t border-ink/10 pt-5 text-center text-[0.78rem] leading-relaxed text-ink-soft italic">
+						<p className="mt-10 text-sm text-ink-faint">
 							{formCopy.prototypeNote}
 						</p>
 					</div>

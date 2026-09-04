@@ -8,9 +8,15 @@ import { event, navLinks } from "@/lib/content";
 /**
  * Pasek nawigacji.
  *
- * Nad Hero jest przezroczysty — plakatowe tło ma zostać nietknięte. Dopiero po
- * przewinięciu pasek „materializuje się” w papier, żeby tekst linków nie walczył
- * z treścią sekcji przesuwającą się pod nim.
+ * Zasada jest taka, że paska nie ma, dopóki nie jest potrzebny. Nad Hero jest
+ * całkiem przezroczysty — plakatowe tło zostaje nietknięte. Po przewinięciu
+ * materializuje się w papier z jedną cienką kreską u dołu: żadnego cienia,
+ * żadnej złotej bordiury, żadnego tła pod treścią. Tyle, żeby linki dało się
+ * przeczytać nad przesuwającą się sekcją, i ani grama więcej.
+ *
+ * Stopnie pisma poszły w górę: linki miały 10,88 px, a podpis sygnatury 9,9 px
+ * — obie wartości wpisane ręcznie jako ułamki rema. Teraz najmniejszy stopień
+ * w całym pasku to `text-xs` (15 px), a linki mają `text-sm` (16 px).
  */
 
 /* Etykiety samego interfejsu paska. `content.ts` opisuje treść festiwalu, nie
@@ -138,9 +144,12 @@ export default function SiteHeader() {
 	return (
 		<header
 			className={cx(
-				"fixed inset-x-0 top-0 z-40 border-b transition-all duration-300 ease-out",
+				"fixed inset-x-0 top-0 z-40 border-b transition-colors duration-300 ease-out",
+				/* Papier, kreska i nic poza tym. Cień pod paskiem był pierwszym
+				   krokiem w stronę szablonu — półprzezroczysta biel z lekkim
+				   rozmyciem wystarcza, żeby tekst pod spodem nie przebijał. */
 				solid
-					? "border-ink/10 bg-paper/88 shadow-paper backdrop-blur-md"
+					? "border-line bg-paper/92 backdrop-blur-sm"
 					: "border-transparent bg-transparent",
 			)}>
 			{/* Pierwszy element w kolejności tabulacji — skrót do treści.
@@ -149,39 +158,34 @@ export default function SiteHeader() {
 			    ekranówkę, której użytkownik klawiatury nigdy by nie usłyszał. */}
 			<a
 				href="#tresc"
-				className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-4 focus:z-50 focus:rounded-sm focus:border focus:border-seal/35 focus:bg-paper focus:px-4 focus:py-2 focus:text-[0.72rem] focus:font-semibold focus:tracking-[0.16em] focus:text-seal focus:uppercase focus:shadow-paper">
+				className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-4 focus:z-50 focus:border focus:border-seal focus:bg-paper focus:px-4 focus:py-2 focus:text-xs focus:font-bold focus:tracking-[0.22em] focus:text-seal focus:uppercase">
 				{chrome.skip}
 			</a>
 
 			<nav aria-label={chrome.navLabel}>
 				<Container>
-					<div className="flex h-16 items-center justify-between gap-3 sm:h-[4.5rem] xl:gap-4">
-						{/* ── Sygnatura: pieczęć + dwuwierszowy lockup ───────────── */}
+					<div className="flex h-16 items-center justify-between gap-2 sm:h-20">
+						{/* ── Sygnatura: pieczęć + dwuwierszowy podpis ───────────── */}
 						<a
 							href="#hero"
-							className="group flex shrink-0 items-center gap-3 rounded-sm">
-							<SealStamp
-								glyph={event.nameCjk}
-								className="h-9 w-9 shrink-0 text-seal transition-transform duration-300 ease-out group-hover:-rotate-3"
-							/>
+							className="group flex shrink-0 items-center gap-3">
+							<SealStamp glyph={event.nameCjk} className="h-9 w-9 shrink-0 text-seal" />
 							<span className="flex flex-col leading-none">
-								<span className="font-display text-base font-semibold text-ink transition-colors duration-200 group-hover:text-seal xl:text-[1.05rem]">
+								<span className="font-display text-base text-ink transition-colors duration-200 group-hover:text-seal">
 									{event.name}
 								</span>
-								{/* Podpis ma niecałe 10 px — przy tej wielkości `ink-muted`
-								    schodzi na tle paska do 3,59:1. `ink-soft` trzyma kontrast
-								    tekstu drobnego. */}
-								<span className="mt-1.5 text-[0.62rem] tracking-[0.28em] text-ink-soft uppercase">
+								<span className="mt-2 text-xs tracking-[0.2em] text-ink-muted uppercase">
 									{event.subtitle}
 								</span>
 							</span>
 						</a>
 
 						{/* ── Linki sekcji (od lg) ───────────────────────────────────
-                Osiem etykiet, pieczęć i CTA muszą zmieścić się w jednym
-                wierszu już przy 1024 px — dlatego skala typografii rośnie
-                dopiero na xl, a nie odwrotnie. */}
-						<ul className="hidden items-center gap-0.5 lg:flex">
+                Osiem etykiet przy 16 px, pieczęć i CTA muszą zmieścić się
+                w jednym wierszu już przy 1024 px. Dlatego linki nie mają
+                wersalików ani rozstrzelenia — wielkość pisma jest tu
+                ważniejsza niż ozdobność etykiety. */}
+						<ul className="hidden items-center lg:flex">
 							{navLinks.map((link) => {
 								const activeLink = link.href.slice(1) === active;
 								return (
@@ -190,24 +194,20 @@ export default function SiteHeader() {
 											href={link.href}
 											aria-current={activeLink ? "true" : undefined}
 											className={cx(
-												"group relative block px-1.5 py-2 text-[0.68rem] whitespace-nowrap tracking-[0.09em] uppercase transition-colors duration-200 xl:px-2 xl:text-[0.76rem] xl:tracking-[0.13em]",
-												/* `seal`, nie `vermilion`: pasek jest półprzezroczysty,
-												   więc pod etykietami bywa ciemna sekcja i tło miesza się
-												   do ok. #e8dad6 — cynober daje tam 3,87:1, pieczęć 5,5:1. */
+												"relative block px-1.5 py-2 text-sm whitespace-nowrap transition-colors duration-200",
 												activeLink
 													? "text-seal"
-													: "text-ink-soft hover:text-seal",
+													: "text-ink-muted hover:text-seal",
 											)}>
 											{link.label}
-											<span
-												aria-hidden="true"
-												className={cx(
-													"absolute inset-x-1.5 bottom-0.5 h-px origin-left bg-seal transition-transform duration-300 ease-out xl:inset-x-2",
-													activeLink
-														? "scale-x-100"
-														: "scale-x-0 group-hover:scale-x-100 group-focus-visible:scale-x-100",
-												)}
-											/>
+											{/* Podkreślenie tylko przy aktywnej sekcji: cienka kreska
+											    tuszem, bez wjeżdżania i bez skalowania. */}
+											{activeLink && (
+												<span
+													aria-hidden="true"
+													className="absolute inset-x-1.5 bottom-0.5 h-px bg-seal"
+												/>
+											)}
 										</a>
 									</li>
 								);
@@ -215,7 +215,7 @@ export default function SiteHeader() {
 						</ul>
 
 						{/* ── Wezwanie do działania + hamburger ──────────────────── */}
-						<div className="flex shrink-0 items-center gap-1.5">
+						<div className="flex shrink-0 items-center gap-1">
 							{/* Ukrywaniem steruje OPAKOWANIE, nie `className` przycisku.
 							    `buttonClasses()` ustawia już `inline-flex` na tym samym
 							    elemencie, a w Tailwind v4 wygrywa reguła późniejsza
@@ -234,7 +234,7 @@ export default function SiteHeader() {
 								aria-label={open ? chrome.closeMenu : chrome.openMenu}
 								aria-expanded={open}
 								aria-controls={MENU_ID}
-								className="inline-flex h-11 w-11 items-center justify-center rounded-sm text-ink transition-colors duration-200 hover:text-seal lg:hidden">
+								className="inline-flex h-11 w-11 items-center justify-center text-ink transition-colors duration-200 hover:text-seal lg:hidden">
 								<svg
 									viewBox="0 0 24 24"
 									className="h-6 w-6"
@@ -290,35 +290,38 @@ export default function SiteHeader() {
             menu jest zamknięte. */}
 				<div id={MENU_ID} className="lg:hidden">
 					{open && (
-						<div className="animate-ink-in max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-ink/12 bg-paper shadow-paper">
+						/* Pułapka Tailwinda v4: w wartości dowolnej spacje zapisuje się
+						   podkreśleniem. Poprzedni zapis `max-h-[calc(100dvh-4rem)]` nie
+						   generował żadnej reguły — panel nie miał ograniczenia wysokości
+						   i przy ośmiu pozycjach schodził pod krawędź ekranu bez
+						   możliwości przewinięcia. */
+						<div className="animate-ink-in max-h-[calc(100dvh_-_4rem)] overflow-y-auto border-b border-line bg-paper sm:max-h-[calc(100dvh_-_5rem)]">
 							<Container>
 								<ul className="flex flex-col">
 									{navLinks.map((link, i) => {
 										const activeLink = link.href.slice(1) === active;
 										return (
-											<li key={link.href} className="border-b border-ink/8">
+											<li key={link.href} className="border-b border-line">
 												<a
 													href={link.href}
 													onClick={() => setOpen(false)}
 													aria-current={activeLink ? "true" : undefined}
 													className={cx(
-														"group flex items-center gap-4 py-4 transition-colors duration-200",
+														"group flex items-center gap-5 py-5 transition-colors duration-200",
 														activeLink ? "text-seal" : "text-ink-soft",
 													)}>
 													<span
 														aria-hidden="true"
 														className={cx(
-															"w-6 text-[0.7rem] tabular-nums",
+															"w-6 text-xs tabular-nums",
 															activeLink ? "text-seal" : "text-ink-faint",
 														)}>
 														{String(i + 1).padStart(2, "0")}
 													</span>
-													<span className="flex-1 text-[1.02rem] tracking-[0.01em]">
-														{link.label}
-													</span>
+													<span className="flex-1 text-lg">{link.label}</span>
 													<Chevron
 														className={cx(
-															"h-4 w-4 shrink-0 transition-all duration-200 group-hover:translate-x-0.5",
+															"h-4 w-4 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5",
 															activeLink ? "text-seal" : "text-ink-faint",
 														)}
 													/>
@@ -328,12 +331,8 @@ export default function SiteHeader() {
 									})}
 								</ul>
 
-								<div className="flex flex-col gap-4 py-6">
-									<div
-										aria-hidden="true"
-										className="meander-band h-[5px] w-full text-seal/25"
-									/>
-									<p className="text-[0.68rem] tracking-[0.2em] text-ink-muted uppercase">
+								<div className="flex flex-col gap-6 py-8">
+									<p className="text-xs tracking-[0.2em] text-ink-muted uppercase">
 										{event.dateShort} · {event.admission}
 									</p>
 									<Button
@@ -350,16 +349,6 @@ export default function SiteHeader() {
 					)}
 				</div>
 			</nav>
-
-			{/* Złota kreska pojawia się razem z tłem — pasek dostaje wtedy dolną
-          krawędź jak bordiura zwoju. */}
-			<div
-				aria-hidden="true"
-				className={cx(
-					"rule-gold pointer-events-none absolute inset-x-0 bottom-0 h-px transition-opacity duration-300",
-					solid ? "opacity-70" : "opacity-0",
-				)}
-			/>
 		</header>
 	);
 }

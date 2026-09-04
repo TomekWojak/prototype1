@@ -1,114 +1,76 @@
-import { CloudBand, CloudPuff, Lantern } from "@/components/ornaments";
 import {
   Button,
   Card,
   CjkGlyph,
   Container,
-  GoldRule,
-  Pill,
   Section,
   SectionHeading,
 } from "@/components/ui";
-import { activities, activitiesCopy, event } from "@/lib/content";
+import { activities, activitiesCopy } from "@/lib/content";
 
 /**
- * Sekcja odświętna — czerwono-złoty rejestr plakatu o tańcu smoka i lwa.
+ * Program główny — sześć pozycji jako lista, nie jako siatka kafelków.
  *
- * Ornamentów jest tu celowo mało. Wcześniej sekcja niosła ich piętnaście,
- * w tym cztery pełnowymiarowe pasy poziome, których nie ma żadna inna
- * sekcja — oprawa krzyczała głośniej niż program, który miała oprawić.
- * Zostały dwie bordiury chmur, dwie latarnie i dwie chmurki.
+ * Sekcja była wcześniej ciemną planszą laki ze złotem: dwie bordiury chmur,
+ * dwie latarnie, chmura w tle i karty w układzie trzykolumnowym. Na telefonie
+ * czytała się dobrze, bo wszystko układało się w jedną kolumnę — na dużym
+ * ekranie rozsypywała się w rząd kafelków i to właśnie ona najmocniej ciągnęła
+ * całą stronę w stronę szablonu.
  *
- * Latarnie i chmury żyją tylko od `md:` w górę: na telefonie każdy piksel
- * szerokości jest potrzebny treści, a ozdoba zwisająca nad kartą zabiera
- * uwagę zamiast ją prowadzić.
+ * Teraz jest biała i nie ma tu ani jednego ornamentu. Treści jest sześć razy
+ * po pięć linii, więc grafika nie miałaby gdzie wybrzmieć — podział niosą
+ * cienkie kreski nad pozycjami (`Card`) i duże odstępy między nimi.
+ * Maksymalnie dwie kolumny: przy trzech tytuły zaczynają się łamać, a lead
+ * schodzi do dwóch słów w wierszu.
  */
-
-/**
- * Latarnie zwisają z bordiury; różne rozmiary i opóźnienia rozstrajają
- * kołysanie. Złoto, nie cynober: cynober na lace daje kontrast 1,5:1,
- * czyli plamę, której nie widać — a nie ornament.
- */
-const lanterns = [
-  {
-    className:
-      "hidden md:block pointer-events-none absolute top-0 left-4 h-32 w-20 origin-top text-gold opacity-60 animate-sway lg:left-10",
-    delay: "0s",
-  },
-  {
-    className:
-      "hidden md:block pointer-events-none absolute top-0 right-5 h-40 w-24 origin-top text-gold opacity-60 animate-sway lg:right-12",
-    delay: "1.6s",
-  },
-];
 
 export default function Activities() {
   return (
-    <Section id="aktywnosci" tone="lacquer" labelledBy="aktywnosci-tytul">
-      {/* ── Bordiura górna: chmury pomyślności ─────────────────── */}
-      <CloudBand className="pointer-events-none absolute inset-x-0 top-0 h-8 w-full text-gold opacity-20" />
-
-      {lanterns.map((lantern) => (
-        <Lantern
-          key={lantern.delay}
-          className={lantern.className}
-          style={{ animationDelay: lantern.delay }}
-        />
-      ))}
-
-      {/* Jedna chmura w tle — żeby laka nie była płaska, ale też żeby
-          nie zbierać drugiego planu z trzech nakładających się warstw. */}
-      <CloudPuff className="pointer-events-none absolute top-52 -left-10 hidden h-24 w-48 animate-drift text-gold opacity-10 md:block" />
-
-      <Container className="relative">
+    <Section id="aktywnosci" tone="paper" labelledBy="aktywnosci-tytul">
+      <Container>
         <SectionHeading
           id="aktywnosci-tytul"
           eyebrow="Program główny"
-          cjk="節目"
-          tone="lacquer"
-          align="center"
           title={
             <>
-              Aktywności <span className="text-gold">festiwalu</span>
+              Aktywności <span className="text-seal">festiwalu</span>
             </>
           }
           lead={activitiesCopy.lead}
         />
 
-        <div className="mt-14 grid gap-6 sm:mt-16 md:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-20 grid gap-x-14 gap-y-16 lg:grid-cols-2">
           {activities.map((activity) => (
-            <Card key={activity.title} tone="lacquer" className="flex flex-col">
-              {/* Plakietka i znak trzymają jedną linię bazową: znak jest
-                  narożnikiem kompozycji, nie tłem pod tekstem. Krycie
-                  niesie sama alfa koloru — inaczej `opacity-*` mnożyłoby
-                  się przez nią i znak gasł dwa razy. */}
-              <div className="flex items-start justify-between gap-4">
-                <Pill tone="lacquer">{activity.tag}</Pill>
-                <CjkGlyph className="-mt-2 shrink-0 text-5xl text-gold/25 transition-colors duration-300 group-hover:text-gold/45">
+            <Card key={activity.title}>
+              {/* Znak i tytuł na jednej linii bazowej — znak jest częścią
+                  nagłówka wiersza, nie plamą tła pod nim. `shrink-0`, bo
+                  przy 360 px dwuznakowe 舞龍 dałoby się ścisnąć razem
+                  z długim tytułem. */}
+              <div className="flex items-baseline gap-4">
+                <CjkGlyph className="shrink-0 text-2xl text-seal/50">
                   {activity.cjk}
                 </CjkGlyph>
+                <h3 className="text-2xl">{activity.title}</h3>
               </div>
 
-              <h3 className="mt-5 font-display text-2xl leading-snug text-balance text-paper">
-                {activity.title}
-              </h3>
+              <p className="mt-2 text-xs tracking-[0.2em] text-ink-faint uppercase">
+                {activity.tag}
+              </p>
 
-              <p className="mt-3 leading-relaxed text-pretty text-paper/70">
+              <p className="mt-4 text-base text-pretty text-ink-muted">
                 {activity.lead}
               </p>
 
-              <GoldRule className="my-6" />
-
-              <ul className="flex flex-col gap-2.5">
+              {/* Punkty programu: pauza zamiast rombu, kropki czy kolorowego
+                  znacznika. Pauza jest dekoracją listy — semantykę niesie
+                  już `<li>`, więc czytnik ekranu jej nie powtarza. */}
+              <ul className="mt-5 space-y-2">
                 {activity.points.map((point) => (
-                  <li key={point} className="flex items-start gap-3">
-                    <span
-                      aria-hidden="true"
-                      className="mt-2 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold"
-                    />
-                    <span className="text-sm leading-relaxed text-paper/80">
-                      {point}
+                  <li key={point} className="flex gap-3 text-sm text-ink-muted">
+                    <span aria-hidden="true" className="text-ink-faint">
+                      —
                     </span>
+                    <span>{point}</span>
                   </li>
                 ))}
               </ul>
@@ -116,41 +78,26 @@ export default function Activities() {
           ))}
         </div>
 
-        {/* ── Pasek domykający ───────────────────────────────────
-            Co dokładnie powtarzamy w oba dni, a co gramy raz, mówi
-            `activitiesCopy` — sekcja obiecywała kiedyś program
-            „identyczny w oba dni”, choć kartę wyżej zapowiadała
-            turniej „drugiego dnia”. */}
-        <div className="relative mt-14 overflow-hidden rounded-sm border border-gold/25 bg-lacquer-deep/40 px-6 py-9 sm:mt-16 sm:px-10 sm:py-11">
-          <CloudPuff className="pointer-events-none absolute -top-10 -right-10 h-28 w-56 text-gold opacity-10" />
+        {/* Blok domykający. Co powtarzamy w oba dni, a co gramy raz, mówi
+            `activitiesCopy` — sekcja obiecywała kiedyś program „identyczny
+            w oba dni”, choć kartę wyżej zapowiadała turniej „drugiego dnia”. */}
+        <div className="mt-20 max-w-2xl">
+          <h3 className="text-2xl">{activitiesCopy.closingTitle}</h3>
 
-          <div className="relative flex flex-col items-center gap-5 text-center">
-            <Pill tone="lacquer">{event.dateShort}</Pill>
+          <p className="mt-5 text-base text-pretty text-ink-muted">
+            {activitiesCopy.closingBody}
+          </p>
 
-            <p className="max-w-xl font-display text-2xl leading-snug text-balance text-paper sm:text-3xl">
-              {activitiesCopy.closingTitle}
-            </p>
-
-            <p className="max-w-xl text-sm leading-relaxed text-pretty text-paper/70">
-              {activitiesCopy.closingBody}
-            </p>
-
-            {/* Bez `max-w-*` w `className`: szerokość i wewnętrzne
-                marginesy ustawia `buttonClasses`, a o zwycięzcy decyduje
-                kolejność w arkuszu, nie w atrybucie. */}
-            <Button href="#warsztaty" variant="gold" size="lg" className="mt-1">
-              {activitiesCopy.closingCta}
-            </Button>
-
-            <p className="text-[0.7rem] font-semibold tracking-[0.28em] uppercase text-gold-light/70">
-              {event.venue} · {event.admission}
-            </p>
-          </div>
+          <Button
+            href="#warsztaty"
+            variant="outline"
+            size="lg"
+            className="mt-8"
+          >
+            {activitiesCopy.closingCta}
+          </Button>
         </div>
       </Container>
-
-      {/* ── Bordiura dolna ─────────────────────────────────────── */}
-      <CloudBand className="pointer-events-none absolute inset-x-0 bottom-0 h-8 w-full rotate-180 text-gold opacity-20" />
     </Section>
   );
 }
