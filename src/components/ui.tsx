@@ -5,22 +5,9 @@ import type {
 } from "react";
 import { BrushStroke } from "@/components/ornaments";
 
-/* ============================================================
-   NARZĘDZIE
-   ============================================================ */
-
 export function cx(...parts: Array<string | false | null | undefined>) {
   return parts.filter(Boolean).join(" ");
 }
-
-/* ============================================================
-   TON SEKCJI
-
-   Dwa tony zamiast pięciu. Nie ma już ciemnych sekcji laki ani
-   tuszu — rytm strony budują odstępy i cienkie kreski, nie zmiany
-   koloru tła. `soft` to ledwie widoczne złamanie bieli, używane
-   oszczędnie, żeby dwie sąsiednie sekcje się nie zlewały.
-   ============================================================ */
 
 export type Tone = "paper" | "soft";
 
@@ -28,10 +15,6 @@ const toneBackground: Record<Tone, string> = {
   paper: "bg-paper",
   soft: "bg-paper-soft",
 };
-
-/* ============================================================
-   CONTAINER
-   ============================================================ */
 
 export function Container({
   children,
@@ -47,14 +30,6 @@ export function Container({
   );
 }
 
-/* ============================================================
-   SECTION
-
-   Odstępy pionowe są celowo duże. Na stronie referencyjnej to
-   właśnie przestrzeń robi wrażenie spokoju — treści jest mało,
-   ale każda ma miejsce, żeby wybrzmieć.
-   ============================================================ */
-
 export function Section({
   id,
   tone = "paper",
@@ -69,15 +44,7 @@ export function Section({
   children: ReactNode;
   className?: string;
   labelledBy?: string;
-  /**
-   * Wyłącz domyślne odstępy pionowe, gdy sekcja rządzi wysokością sama
-   * (Hero: `min-h` + wyśrodkowanie). Bez tego 160 px paddingu doklejało się
-   * do pełnoekranowej wysokości i robiło z ekranu otwierającego pustkę
-   * na 1250 px, a próba nadpisania go klasą `pt-*` z `className` jest
-   * niedeterministyczna — o zwycięzcy decyduje kolejność w arkuszu.
-   */
   padded?: boolean;
-  /** Stopka jest sekcją wizualnie, ale landmarkiem `footer` semantycznie. */
   as?: "section" | "footer";
 }) {
   return (
@@ -95,10 +62,6 @@ export function Section({
     </Tag>
   );
 }
-
-/* ============================================================
-   EYEBROW — nadkreślenie nad nagłówkiem
-   ============================================================ */
 
 export function Eyebrow({
   children,
@@ -119,9 +82,19 @@ export function Eyebrow({
   );
 }
 
-/* ============================================================
-   SECTION HEADING
-   ============================================================ */
+function accentLastWord(title: string) {
+  const words = title.trim().split(/\s+/).filter(Boolean);
+  if (words.length < 2) return title;
+
+  const last = words[words.length - 1];
+  const start = words.slice(0, -1).join(" ");
+
+  return (
+    <>
+      {start} <span className="text-seal">{last}</span>
+    </>
+  );
+}
 
 export function SectionHeading({
   id,
@@ -133,7 +106,7 @@ export function SectionHeading({
 }: {
   id?: string;
   eyebrow?: string;
-  title: ReactNode;
+  title: string;
   lead?: ReactNode;
   align?: "left" | "center";
   className?: string;
@@ -151,7 +124,7 @@ export function SectionHeading({
       {eyebrow && <Eyebrow className="mb-5">{eyebrow}</Eyebrow>}
 
       <h2 id={id} className="text-4xl sm:text-5xl">
-        {title}
+        {accentLastWord(title)}
       </h2>
 
       {lead && (
@@ -167,10 +140,6 @@ export function SectionHeading({
     </header>
   );
 }
-
-/* ============================================================
-   BUTTON
-   ============================================================ */
 
 type ButtonVariant = "solid" | "outline";
 type ButtonSize = "md" | "lg";
@@ -205,8 +174,6 @@ type ButtonOwnProps = {
   className?: string;
 };
 
-/* Unia rozłączna: `target`/`rel` tylko przy `href`, `type`/`disabled`
-   tylko na przycisku. Literówka w nazwie propa jest błędem kompilacji. */
 type ButtonAsLink = ButtonOwnProps &
   Omit<AnchorHTMLAttributes<HTMLAnchorElement>, keyof ButtonOwnProps> & {
     href: string;
@@ -218,7 +185,13 @@ type ButtonAsButton = ButtonOwnProps &
   };
 
 export function Button(props: ButtonAsLink | ButtonAsButton) {
-  const { children, variant = "solid", size = "md", className, ...rest } = props;
+  const {
+    children,
+    variant = "solid",
+    size = "md",
+    className,
+    ...rest
+  } = props;
   const classes = cx(buttonClasses(variant, size), className);
 
   const { href, type, ...shared } = rest as {
@@ -249,15 +222,6 @@ export function Button(props: ButtonAsLink | ButtonAsButton) {
   );
 }
 
-/* ============================================================
-   CARD
-
-   Bez cienia, bez zaokrągleń, bez obramowania dookoła. Karty
-   oddziela jedynie cienka kreska u góry — tyle wystarczy, żeby
-   oko widziało podział, a strona nie zaczęła wyglądać jak
-   zestaw kafelków z szablonu.
-   ============================================================ */
-
 export function Card({
   children,
   className,
@@ -266,17 +230,11 @@ export function Card({
   className?: string;
 }) {
   return (
-    <div
-      className={cx("group border-t border-line pt-8", className)}
-    >
+    <div className={cx("group border-t border-line pt-8", className)}>
       {children}
     </div>
   );
 }
-
-/* ============================================================
-   PILL — mała plakietka (czas, poziom, liczba miejsc)
-   ============================================================ */
 
 export function Pill({
   children,
@@ -297,22 +255,15 @@ export function Pill({
   );
 }
 
-/* ============================================================
-   SEPARATORY
-   ============================================================ */
-
 export function InkRule({ className }: { className?: string }) {
-  return <div aria-hidden="true" className={cx("rule-ink h-px w-full", className)} />;
+  return (
+    <div aria-hidden="true" className={cx("rule-ink h-px w-full", className)} />
+  );
 }
 
-/** Krótka kreska pędzlem — akcent pod nagłówkiem, używać oszczędnie. */
 export function BrushRule({ className }: { className?: string }) {
   return <BrushStroke className={cx("h-2 w-24 text-seal/70", className)} />;
 }
-
-/* ============================================================
-   CJK GLYPH
-   ============================================================ */
 
 export function CjkGlyph({
   children,

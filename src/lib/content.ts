@@ -1,499 +1,584 @@
-/**
- * Jedno źródło prawdy dla całej treści serwisu.
- *
- * Dlaczego osobny plik, a nie tekst wpisany w komponenty:
- * treść wydarzenia zmienia się częściej niż układ strony, a interesariusze
- * (miasto, partnerzy, szkoły) poprawiają zwykle słowa, nie kod. Trzymanie
- * copy w jednym miejscu pozwala im pracować bez dotykania JSX.
- *
- * UWAGA — PROTOTYP: dane kontaktowe, godziny, liczby miejsc i program
- * warsztatów są danymi ZASTĘPCZYMI. Fakty pewne (nazwa, data, adres,
- * hasła, partnerzy) pochodzą z materiałów promocyjnych festiwalu.
- */
+import * as fallback from "@/lib/fallback";
+import { sanityClient } from "@/lib/sanity/client";
+import { toIsoDate } from "@/lib/date";
+import { youtubeEmbedUrl } from "@/lib/youtube";
+import { CONTENT_QUERY } from "@/lib/sanity/query";
 
-/* ============================================================
-   RDZEŃ WYDARZENIA
-   ============================================================ */
+export type FestivalEvent = {
+  name: string;
+  nameCjk: string;
+  subtitle: string;
+  kicker: string;
+  date: string;
+  dateIso: string;
+  venue: string;
+  admission: string;
+  ctaPrimary: string;
+  ctaSecondary: string;
+  ctaHeader: string;
+  tagline: string;
+  lead: string;
+  facts: readonly string[];
+};
 
-export const event = {
-	name: "Księga i Miecz",
-	nameCjk: "文武",
-	/* Nazwa rozbita jawnie na wiersze plakatu. Wcześniej Hero robił
-	   `name.split(" ")` i milcząco zakładał, że słowa są dokładnie trzy. */
-	titleLines: ["Księga", "i", "Miecz"],
-	subtitle: "Wen & Wu",
-	kicker: "Festiwal Kultury Chińskiej",
-	nameEn: "Book and Sword Festival",
-	dateLabel: "24–25 października 2026",
-	dateShort: "24–25.10.2026",
-	dateIso: "2026-10-24",
-	venue: "Sala Sportowa SP nr 18",
-	venueShort: "SP nr 18",
-	street: "ul. Bł. Karoliny 21",
-	streetShort: "Bł. Karoliny",
-	postal: "35-501 Rzeszów",
-	city: "Rzeszów",
-	admission: "Wstęp wolny",
-	tagline: "Poznaj bliżej kulturę i tradycję Chin",
-	lead: "Dwa dni, w których księga i miecz stoją obok siebie. Kaligrafia i taniec smoka, herbata i szabla, cisza pędzla i huk bębna — wszystko, co przez dwa tysiące lat składało się na chiński ideał człowieka pełnego.",
-} as const;
+export type Pillar = {
+  key: string;
+  cjk: string;
+  pinyin: string;
+  name: string;
+  role: string;
+  description: string;
+  traits: readonly string[];
+};
 
-/* ============================================================
-   NAWIGACJA — kolejność odpowiada kolejności sekcji na stronie
-   ============================================================ */
+export type Audience = { title: string; description: string };
+export type Quote = { text: string; note: string };
 
-export const navLinks = [
-	{ href: "#o-festiwalu", label: "O festiwalu" },
-	{ href: "#aktywnosci", label: "Aktywności" },
-	{ href: "#warsztaty", label: "Warsztaty" },
-	{ href: "#zapisy", label: "Zapisy" },
-	{ href: "#lokalizacja", label: "Lokalizacja" },
-	{ href: "#partnerzy", label: "Partnerzy" },
-	{ href: "#faq", label: "FAQ" },
-	{ href: "#kontakt", label: "Kontakt" },
-] as const;
+export type Activity = {
+  title: string;
+  description: string;
+  cjk: string;
+};
 
-/* ============================================================
-   WEN & WU — dwa filary
-   ============================================================ */
+export type Workshop = {
+  title: string;
+  duration?: string;
+  level?: string;
+  age?: string;
+  seats?: number;
+  description: string;
+};
 
-export const pillars = [
-	{
-		/* `key` zamiast polegania na kolejności w tablicy — sekcja „O festiwalu”
-		   przypisuje filary do stron kompozycji właśnie po tym kluczu. */
-		key: "wen",
-		cjk: "文",
-		pinyin: "Wén",
-		name: "Wen",
-		role: "Człowiek i kultura",
-		description:
-			"Strona księgi. To, co człowiek buduje w sobie w ciszy: cierpliwość nad pędzlem, uwaga przy parzeniu herbaty, ciekawość, która każe pytać dalej.",
-		traits: ["wiedza", "edukacja", "sztuka", "mądrość"],
-	},
-	{
-		key: "wu",
-		cjk: "武",
-		pinyin: "Wǔ",
-		name: "Wu",
-		role: "Siła i harmonia",
-		description:
-			"Strona miecza. To, co człowiek buduje w sobie w ruchu: powtórzenie formy, panowanie nad ciałem, gotowość stanąć tam, gdzie trudno.",
-		traits: ["odwaga", "dyscyplina", "odpowiedzialność", "siła charakteru"],
-	},
-] as const;
+export type OpeningHours = { day: string; time: string };
+export type TravelNote = { title: string; body: string };
+export type Partner = { name: string; href?: string | null };
+export type PartnerGroup = { label: string; partners: readonly Partner[] };
+export type Question = { q: string; a: string };
 
-export const aboutQuote = {
-	text: "Wiedza pokazuje właściwy kierunek. Odwaga pozwala nim podążać.",
-	note: "Największym ideałem w Chinach nie był wyłącznie uczony ani wojownik, lecz człowiek, który potrafił połączyć Wen i Wu. To właśnie dlatego mówi się o jedności księgi i miecza.",
-} as const;
+export type Channel = { label: string; href: string };
 
-export const modernCreed = [
-	"Rozwijaj umysł.",
-	"Wzmacniaj ciało.",
-	"Kształtuj charakter.",
-] as const;
+export type SectionCopy = { eyebrow: string; title: string };
 
-export const modernCreedClosing = "Prawdziwa siła rodzi się z harmonii.";
+export type FormStep = { title: string; description: string };
 
-/* ============================================================
-   DLA KOGO JEST FESTIWAL
-   ============================================================ */
+export type Content = {
+  event: FestivalEvent;
+  pillars: readonly Pillar[];
+  aboutCopy: SectionCopy;
+  aboutQuote: Quote;
+  modernCreed: readonly string[];
+  modernCreedClosing: string;
+  audiencesTitle: string;
+  audiences: readonly Audience[];
+  activities: readonly Activity[];
+  activitiesCopy: SectionCopy & {
+    lead: string;
+    closingTitle: string;
+    closingBody: string;
+    closingCta: string;
+  };
+  workshops: readonly Workshop[];
+  workshopsCopy: SectionCopy & {
+    lead: string;
+    rulesTitle: string;
+    rules: readonly string[];
+    ctaLabel: string;
+  };
+  formCopy: {
+    eyebrow: string;
+    title: string;
+    lead: string;
+    stepsTitle: string;
+    steps: readonly FormStep[];
+    submit: string;
+    submitting: string;
+    successTitle: string;
+    successBody: string;
+    againLabel: string;
+  };
+  location: {
+    venue: string;
+    hours: readonly OpeningHours[];
+    notes: readonly TravelNote[];
+    mapsQuery: string;
+  };
+  locationCopy: SectionCopy & {
+    lead: string;
+    mapsLabel: string;
+    hoursTitle: string;
+  };
+  partnerGroups: readonly PartnerGroup[];
+  partnersCopy: SectionCopy & { lead: string };
+  faq: readonly Question[];
+  faqCopy: SectionCopy & { lead: string; ctaTitle: string; ctaLabel: string };
+  contact: {
+    organiser: string;
+    email: string;
+    phone: string;
+    phoneHref: string;
+    channels: readonly Channel[];
+  };
+  contactCopy: SectionCopy & {
+    lead: string;
+    channelsTitle: string;
+    navTitle: string;
+    backToTop: string;
+  };
+  stream: {
+    live: string;
+    title: string;
+    placeholder: string;
+    showLabel: string;
+    hideLabel: string;
+    active: boolean;
+    embedUrl: string | null;
+  };
+};
 
-export const audiences = [
-	{
-		cjk: "家",
-		title: "Rodziny z dziećmi",
-		description:
-			"Strefa rodzinna, warsztaty od 7 lat i pokazy, na których dzieci siedzą w pierwszym rzędzie. Wejście bez biletów, bez sztywnego harmonogramu.",
-	},
-	{
-		cjk: "武",
-		title: "Ćwiczący sztuki walki",
-		description:
-			"Formy Chen, praca z broniami, rozmowy z instruktorami z całej Polski. Przyjdź w stroju treningowym — będzie gdzie się rozgrzać.",
-	},
-	{
-		cjk: "文",
-		title: "Miłośnicy kultury i sztuki",
-		description:
-			"Kaligrafia, ceremonia gongfu cha, muzyka i gry planszowe Wschodu. Dla tych, których do Chin prowadzi pędzel, a nie pięść.",
-	},
-	{
-		cjk: "壽",
-		title: "Seniorzy i osoby początkujące",
-		description:
-			"Taijiquan zaczyna się od stania i oddechu. Nie potrzebujesz sprawności ani doświadczenia — tylko wygodnych butów.",
-	},
-] as const;
+function text(value: string | null | undefined, fallbackValue: string): string {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : fallbackValue;
+}
 
-/* ============================================================
-   AKTYWNOŚCI — program główny, otwarty dla wszystkich
-   ============================================================ */
+/* `NoInfer` wygląda na zbędne, ale bez niego TypeScript wnioskuje typ wyniku
+   z literałów `as const` w `fallback.ts` i zwykły `string` z CMS-a przestaje
+   do niego pasować. */
+function list<T, Z>(
+  items: readonly T[] | null | undefined,
+  fallbackValue: readonly NoInfer<Z>[],
+  mapItem: (item: T, index: number) => Z,
+): readonly Z[] {
+  if (!items || items.length === 0) return fallbackValue;
 
-export const activities = [
-	{
-		cjk: "舞龍",
-		title: "Taniec smoka",
-		tag: "Pokaz główny",
-		lead: "Kilkunastometrowy smok na drążkach, prowadzony przez zgraną ekipę.",
-		points: [
-			"Symbolizuje szczęście i dobrobyt",
-			"Wykonywany przez zgraną ekipę tancerzy",
-			"Porusza się w rytm bębnów i talerzy",
-		],
-	},
-	{
-		cjk: "舞獅",
-		title: "Taniec lwa",
-		tag: "Pokaz główny",
-		lead: "Dwóch tancerzy w jednym kostiumie — i lew, który mruga, kłania się i psoci.",
-		points: [
-			"Odpędza złe duchy i przynosi błogosławieństwo",
-			"Towarzyszy Chińskiemu Nowemu Rokowi i festiwalom",
-			"Prowadzony przez bębny i talerze",
-		],
-	},
-	{
-		cjk: "武術",
-		title: "Pokazy sztuk walki",
-		tag: "Wu",
-		lead: "Taijiquan stylu Chen, wushu, formy z bronią białą — na żywo, z omówieniem.",
-		points: [
-			"Formy ręczne i pokazy z broniami",
-			"Sekcje dzieci, młodzieży i dorosłych",
-			"Komentarz instruktora po każdym pokazie",
-		],
-	},
-	{
-		cjk: "茶道",
-		title: "Ceremonia parzenia herbaty",
-		tag: "Wen",
-		lead: "Gongfu cha: mały czajniczek, gorąca woda i bardzo dużo uwagi.",
-		points: [
-			"Pokaz pełnej ceremonii co godzinę",
-			"Degustacja herbat z Yunnanu i Fujianu",
-			"Rozmowa o tym, czym różni się parzenie od zaparzania",
-		],
-	},
-	{
-		cjk: "書法",
-		title: "Kaligrafia chińska",
-		tag: "Wen",
-		lead: "Pędzel, tusz, papier ryżowy i pierwszy własny znak do zabrania do domu.",
-		points: [
-			"Stanowiska otwarte przez cały dzień",
-			"Nauka znaków 文 i 武 od podstaw",
-			"Własna kaligrafia na pamiątkę",
-		],
-	},
-	{
-		cjk: "棋",
-		title: "Gry Wschodu: weiqi i xiangqi",
-		tag: "Wen",
-		lead: "Go i chińskie szachy — strategia, która uczy cierpliwości szybciej niż każdy wykład.",
-		points: [
-			"Stoliki do gry i krótkie partie pokazowe",
-			"Wprowadzenie w zasady w 10 minut",
-			"Turniej błyskawiczny drugiego dnia",
-		],
-	},
-] as const;
+  const filled = items
+    .map((item, index) => ({ item, index }))
+    .filter(({ item }) => !isEmpty(item))
+    .map(({ item, index }) => mapItem(item, index));
 
-/* ============================================================
-   CZTERY HASŁA Z PLAKATU
-   Osobno od `activities`, bo plakat mówi krócej niż program:
-   smok i lew stoją tam w jednym haśle. Trzymanie tego jako własnej
-   listy zamiast sięgania do `activities` po indeksie sprawia, że
-   przestawienie programu nie psuje po cichu sekcji Hero.
-   ============================================================ */
+  return filled.length > 0 ? filled : fallbackValue;
+}
 
-export const posterHighlights = [
-	{ cjk: "舞", label: "Smocze i lwie tańce" },
-	{ cjk: "武", label: "Pokazy sztuk walki" },
-	{ cjk: "茶", label: "Ceremonia parzenia herbaty" },
-	{ cjk: "書", label: "Warsztaty kaligrafii" },
-] as const;
+function isEmpty(value: unknown): boolean {
+  if (value === null || value === undefined) return true;
+  if (typeof value === "string") return value.trim() === "";
+  if (typeof value === "number" || typeof value === "boolean") return false;
+  if (Array.isArray(value)) return value.every(isEmpty);
+  if (typeof value === "object") return Object.values(value).every(isEmpty);
+  return false;
+}
 
-/* ============================================================
-   TEKSTY SEKCJI
+function channel(label: string, own: string | null | undefined): Channel {
+  const entered = own?.trim() ?? "";
+  return { label, href: entered || fallback.defaultChannelUrl(label) || "" };
+}
 
-   Leady, hasła domykające i zasady zapisów. Wcześniej mieszkały wprost
-   w JSX poszczególnych sekcji, przez co zaczęły się rozjeżdżać: jedna
-   sekcja obiecywała identyczny program w oba dni, druga zapowiadała
-   turniej „drugiego dnia”; jedna kazała przyjść 15 minut przed startem,
-   druga o tej samej godzinie zwalniała miejsce. Trzymanie tego obok
-   danych, których dotyczy, jest jedynym sposobem, żeby takie sprzeczności
-   dało się w ogóle zauważyć.
-   ============================================================ */
+function dialable(phone: string): string {
+  return phone.replace(/[^\d+]/g, "");
+}
 
-export const activitiesCopy = {
-	lead: "Wszystko poniżej jest otwarte dla każdego — bez biletów, bez zapisów, w oba dni festiwalu.",
-	closingTitle: "Pokazy główne powtarzamy w oba dni",
-	closingBody:
-		"Nie musisz wybierać dnia — tańce, pokazy sztuk walki, ceremonia herbaty i kaligrafia czekają i w sobotę, i w niedzielę. Jednorazowy jest tylko turniej błyskawiczny weiqi, który rozgrywamy w niedzielę.",
-	closingCta: "Zobacz warsztaty z zapisami",
-} as const;
+type SanityResponse = Awaited<
+  ReturnType<NonNullable<typeof sanityClient>["fetch"]>
+>;
 
-export const workshopsCopy = {
-	lead: "Każdy warsztat ma ograniczoną liczbę miejsc. Pędzle, herbatę, maty i broń treningową zapewniamy — przynieś tylko wygodny strój.",
-	rulesTitle: "Jak działają zapisy",
-	rules: [
-		"Jedna osoba, jeden warsztat — termin proponujemy w odpowiedzi",
-		"Potwierdzenie e-mailem w ciągu dwóch dni roboczych",
-		"Niepotwierdzone miejsca zwalniamy 5 minut przed startem",
-	],
-	ctaLabel: "Przejdź do zapisów",
-} as const;
+async function fetchFromSanity(): Promise<SanityResponse | null> {
+  if (!sanityClient) return null;
 
-export const locationCopy = {
-	lead: "Sala sportowa SP nr 18 — kwadrans autobusem z Rynku, wejście z poziomu ulicy. Otwarte w oba dni festiwalu.",
-	mapsLabel: "Otwórz w Mapach Google",
-	hoursTitle: "Godziny otwarcia",
-} as const;
+  try {
+    return await sanityClient.fetch(
+      CONTENT_QUERY,
+      {},
+      { next: { revalidate: 30 } },
+    );
+  } catch (err) {
+    console.warn(
+      "[content] Nie udało się pobrać treści z Sanity — używam treści z fallback.ts.",
+      err,
+    );
+    return null;
+  }
+}
 
-export const partnersCopy = {
-	lead: "Festiwal powstaje we współpracy z miastem, związkami sportowymi i szkołami sztuk walki z Rzeszowa i całej Polski.",
-	note: "Logotypy partnerów zostaną wstawione w wersji produkcyjnej — powyżej monogramy zastępcze.",
-} as const;
+export async function getContent(): Promise<Content> {
+  const data = (await fetchFromSanity()) as Record<
+    string,
+    Record<string, unknown> | null
+  > | null;
 
-export const faqCopy = {
-	lead: "Zebrane pytania od uczestników, szkół i partnerów. Jeśli czegoś tu brakuje — napisz do nas.",
-	/* Bezrodzajowo: to jedyne miejsce w serwisie, gdzie zwrot do użytkownika
-	   zdradzał rodzaj („Nie znalazłeś”). Reszta strony go unika. */
-	ctaTitle: "Nie ma tu Twojego pytania?",
-	ctaLabel: "Napisz do nas",
-} as const;
+  const field = <T>(doc: string, name: string): T | undefined =>
+    (data?.[doc]?.[name] as T | undefined) ?? undefined;
 
-export const contactCopy = {
-	lead: "Pytania o program, współpracę i wolontariat — na adres główny. Media i patronaty mają osobną skrzynkę.",
-	channelsTitle: "Śledź festiwal",
-	navTitle: "Na tej stronie",
-	backToTop: "Wróć na początek",
-} as const;
+  const date = text(field<string>("event", "date"), fallback.event.date);
 
-/* ============================================================
-   WARSZTATY — wymagają zapisu, limit miejsc
+  const event: FestivalEvent = {
+    nameCjk: fallback.event.nameCjk,
+    name: text(field<string>("event", "name"), fallback.event.name),
+    subtitle: text(field<string>("event", "subtitle"), fallback.event.subtitle),
+    kicker: text(field<string>("event", "kicker"), fallback.event.kicker),
+    tagline: text(field<string>("event", "tagline"), fallback.event.tagline),
+    lead: text(field<string>("event", "lead"), fallback.event.lead),
+    date,
+    dateIso: toIsoDate(date),
+    admission: text(
+      field<string>("event", "admission"),
+      fallback.event.admission,
+    ),
+    venue: text(field<string>("event", "venue"), fallback.event.venue),
+    ctaPrimary: text(
+      field<string>("event", "ctaPrimary"),
+      fallback.event.ctaPrimary,
+    ),
+    ctaSecondary: text(
+      field<string>("event", "ctaSecondary"),
+      fallback.event.ctaSecondary,
+    ),
+    ctaHeader: text(
+      field<string>("event", "ctaHeader"),
+      fallback.event.ctaHeader,
+    ),
 
-   `level` mówi wyłącznie o zaawansowaniu, a ograniczenia wiekowe mają
-   własne pole `age`. Wcześniej jedno pole trzymało oba rodzaje informacji,
-   przez co plakietka z ukrytą etykietą „Poziom:” czytała się czytnikom
-   ekranu jako „Poziom: Poziom średni” albo „Poziom: 7–12 lat”.
-   ============================================================ */
+    facts: list(
+      field<string[]>("event", "facts"),
+      fallback.event.facts,
+      (s) => s,
+    ).slice(0, 3),
+  };
 
-export const workshops = [
-	{
-		cjk: "書法",
-		title: "Kaligrafia: pierwsze pociągnięcie pędzla",
-		duration: "60 min",
-		level: "Bez doświadczenia",
-		seats: 20,
-		description:
-			"Jak trzymać pędzel, jak oddychać przy kresce i dlaczego ten sam znak dwa razy nigdy nie wychodzi tak samo. Materiały zapewniamy.",
-	},
-	{
-		cjk: "太極拳",
-		title: "Taijiquan Chen — forma podstawowa",
-		duration: "75 min",
-		level: "Początkujący",
-		seats: 30,
-		description:
-			"Osiem ruchów, które wystarczą na całe życie ćwiczenia. Pracujemy nad postawą, przenoszeniem ciężaru i spokojnym oddechem.",
-	},
-	{
-		cjk: "功夫茶",
-		title: "Gongfu cha — warsztat herbaty",
-		duration: "45 min",
-		level: "Dla wszystkich",
-		seats: 16,
-		description:
-			"Parzysz sam, od pierwszego przelania po ostatni napar. Uczymy proporcji, temperatury i czasu — reszta to już uważność.",
-	},
-	{
-		cjk: "武術",
-		title: "Wushu dla dzieci",
-		duration: "45 min",
-		level: "Początkujący",
-		age: "7–12 lat",
-		seats: 24,
-		description:
-			"Rozgrzewka, podstawowe pozycje, kopnięcia i sporo hałasu. Dziecko wychodzi zmęczone i bardzo z siebie zadowolone.",
-	},
-	{
-		cjk: "鼓",
-		title: "Bęben lwa — rytm i sygnały",
-		duration: "45 min",
-		level: "Dla wszystkich",
-		age: "od 10 lat",
-		seats: 12,
-		description:
-			"Bez bębna lew się nie rusza. Uczymy trzech podstawowych rytmów i sygnałów, którymi perkusja prowadzi tancerzy.",
-	},
-	{
-		cjk: "器械",
-		title: "Szabla i włócznia — praca z bronią",
-		duration: "60 min",
-		level: "Średniozaawansowany",
-		seats: 16,
-		description:
-			"Dla osób, które mają za sobą podstawy formy ręcznej. Broń treningowa na miejscu, obowiązkowy instruktaż bezpieczeństwa.",
-	},
-] as const;
+  const phone = text(field<string>("contact", "phone"), fallback.contact.phone);
 
-/* ============================================================
-   FORMULARZ ZAPISÓW
-   ============================================================ */
+  return {
+    event,
 
-export const formCopy = {
-	eyebrow: "Zapisy",
-	title: "Zapisz się na warsztaty",
-	lead: "Wejście na festiwal jest wolne i nie wymaga rejestracji. Zapisujemy tylko na warsztaty — miejsc jest tyle, ile pędzli i mat na sali.",
-	submit: "Wyślij zgłoszenie",
-	submitting: "Wysyłanie…",
-	successTitle: "Zgłoszenie przyjęte",
-	/* Formularz nie ma wyboru warsztatu, więc obietnica nie może mówić
-	   o „wybranym” terminie — to my proponujemy warsztat w odpowiedzi. */
-	successBody:
-		"Dziękujemy. Propozycję warsztatu i termin wyślemy na podany adres e-mail w ciągu dwóch dni roboczych.",
-	againLabel: "Zgłoś kolejną osobę",
-	prototypeNote:
-		"To prototyp — zgłoszenie nie jest nigdzie wysyłane ani zapisywane.",
-} as const;
+    pillars: list(
+      field<Array<{ name?: string; role?: string; description?: string }>>(
+        "about",
+        "pillars",
+      ),
+      fallback.pillars,
+      (f, index): Pillar => {
+        const decoration = fallback.pillarDecoration(index);
+        return {
+          key: decoration.key,
+          cjk: decoration.cjk,
+          pinyin: decoration.pinyin,
+          traits: decoration.traits,
+          name: f.name ?? "",
+          role: f.role ?? "",
+          description: f.description ?? "",
+        };
+      },
+    ),
 
-/* ============================================================
-   LOKALIZACJA
-   ============================================================ */
+    aboutCopy: {
+      eyebrow: text(
+        field<string>("about", "eyebrow"),
+        fallback.aboutCopy.eyebrow,
+      ),
+      title: text(field<string>("about", "title"), fallback.aboutCopy.title),
+    },
+    aboutQuote: {
+      text: text(field<string>("about", "quoteText"), fallback.aboutQuote.text),
+      note: text(field<string>("about", "quoteNote"), fallback.aboutQuote.note),
+    },
+    modernCreed: list(
+      field<string[]>("about", "creed"),
+      fallback.modernCreed,
+      (s) => s,
+    ),
+    modernCreedClosing: text(
+      field<string>("about", "creedClosing"),
+      fallback.modernCreedClosing,
+    ),
+    audiencesTitle: text(
+      field<string>("about", "audiencesTitle"),
+      "Dla kogo jest ten festiwal",
+    ),
+    audiences: list(
+      field<Array<{ title?: string; description?: string }>>(
+        "about",
+        "audiences",
+      ),
+      fallback.audiences,
+      (o): Audience => ({
+        title: o.title ?? "",
+        description: o.description ?? "",
+      }),
+    ),
 
-export const location = {
-	venue: event.venue,
-	address: `${event.street}, ${event.postal}`,
-	hours: [
-		{ day: "Sobota, 24 października", time: "10:00–19:00" },
-		{ day: "Niedziela, 25 października", time: "10:00–17:00" },
-	],
-	notes: [
-		{
-			cjk: "門",
-			title: "Wejście i dostępność",
-			body: "Sala na poziomie parteru, wejście bez progów, wydzielone miejsca dla wózków przy scenie. Toaleta dostępna.",
-		},
-		{
-			cjk: "車",
-			title: "Dojazd i parking",
-			body: "Bezpłatny parking przy szkole (ok. 60 miejsc) oraz parking osiedlowy od ul. Bł. Karoliny. Przystanek autobusowy 200 m od wejścia.",
-		},
-		{
-			cjk: "時",
-			title: "Ile to zajmie",
-			body: "Ok. 15 minut autobusem z Rynku, 25 minut spacerem. Pełny obieg festiwalu to około 2 godziny.",
-		},
-	],
-	mapsQuery: "Szkoła Podstawowa nr 18, Bł. Karoliny 21, 35-501 Rzeszów",
-} as const;
+    activities: list(
+      field<Array<{ title?: string; description?: string }>>(
+        "activities",
+        "items",
+      ),
+      fallback.activities,
+      (a) => ({ title: a.title ?? "", description: a.description ?? "" }),
+    ).map((a, index): Activity => ({
+      ...a,
+      cjk: fallback.activityGlyph(index),
+    })),
+    activitiesCopy: {
+      eyebrow: text(
+        field<string>("activities", "eyebrow"),
+        fallback.activitiesCopy.eyebrow,
+      ),
+      title: text(
+        field<string>("activities", "title"),
+        fallback.activitiesCopy.title,
+      ),
+      lead: text(
+        field<string>("activities", "lead"),
+        fallback.activitiesCopy.lead,
+      ),
+      closingTitle: text(
+        field<string>("activities", "closingTitle"),
+        fallback.activitiesCopy.closingTitle,
+      ),
+      closingBody: text(
+        field<string>("activities", "closingBody"),
+        fallback.activitiesCopy.closingBody,
+      ),
+      closingCta: text(
+        field<string>("activities", "closingCta"),
+        fallback.activitiesCopy.closingCta,
+      ),
+    },
 
-/* ============================================================
-   PARTNERZY — logotypy zastąpione monogramami-pieczęciami
-   ============================================================ */
+    workshops: list(
+      field<
+        Array<{
+          title?: string;
+          description?: string;
+          duration?: string;
+          level?: string;
+          age?: string;
+          seats?: number;
+        }>
+      >("workshops", "items"),
+      fallback.workshops,
+      (w): Workshop => ({
+        title: w.title ?? "",
+        description: w.description ?? "",
+        duration: w.duration ?? "",
+        level: w.level ?? "",
+        ...(w.age ? { age: w.age } : {}),
 
-export const partnerGroups = [
-	{
-		label: "Patronat i wsparcie",
-		partners: [
-			{ name: "Rzeszów 2026 — Europejskie Miasto Sportu", monogram: "R26" },
-			{ name: "ACES Europe", monogram: "AC" },
-			{ name: "Rzeszów — stolica innowacji", monogram: "RZ" },
-		],
-	},
-	{
-		label: "Organizatorzy",
-		partners: [
-			{ name: "Fundacja Chen Taijiquan Rzeszów", monogram: "陳" },
-			{ name: "Stowarzyszenie Chen Taijiquan Rzeszów", monogram: "太" },
-		],
-	},
-	{
-		label: "Współorganizatorzy",
-		partners: [
-			{ name: "Polski Związek Wushu", monogram: "武" },
-			{ name: "Szkoła Sztuk Walki Vo Thuat Thanh Quyen", monogram: "VT" },
-		],
-	},
-] as const;
+        ...(typeof w.seats === "number" ? { seats: w.seats } : {}),
+      }),
+    ),
+    workshopsCopy: {
+      eyebrow: text(
+        field<string>("workshops", "eyebrow"),
+        fallback.workshopsCopy.eyebrow,
+      ),
+      title: text(
+        field<string>("workshops", "title"),
+        fallback.workshopsCopy.title,
+      ),
+      lead: text(
+        field<string>("workshops", "lead"),
+        fallback.workshopsCopy.lead,
+      ),
+      rulesTitle: text(
+        field<string>("workshops", "rulesTitle"),
+        fallback.workshopsCopy.rulesTitle,
+      ),
+      rules: list(
+        field<string[]>("workshops", "rules"),
+        fallback.workshopsCopy.rules,
+        (s) => s,
+      ),
+      ctaLabel: text(
+        field<string>("workshops", "ctaLabel"),
+        fallback.workshopsCopy.ctaLabel,
+      ),
+    },
 
-/* ============================================================
-   FAQ
-   ============================================================ */
+    formCopy: {
+      eyebrow: text(
+        field<string>("registration", "eyebrow"),
+        fallback.formCopy.eyebrow,
+      ),
+      title: text(
+        field<string>("registration", "title"),
+        fallback.formCopy.title,
+      ),
+      lead: text(field<string>("registration", "lead"), fallback.formCopy.lead),
+      stepsTitle: text(
+        field<string>("registration", "stepsTitle"),
+        fallback.formCopy.stepsTitle,
+      ),
+      steps: list(
+        field<Array<{ title?: string; description?: string }>>(
+          "registration",
+          "steps",
+        ),
+        fallback.formCopy.steps,
+        (k): FormStep => ({
+          title: k.title ?? "",
+          description: k.description ?? "",
+        }),
+      ),
+      submit: text(
+        field<string>("registration", "submitLabel"),
+        fallback.formCopy.submit,
+      ),
+      submitting: text(
+        field<string>("registration", "submittingLabel"),
+        fallback.formCopy.submitting,
+      ),
+      successTitle: text(
+        field<string>("registration", "successTitle"),
+        fallback.formCopy.successTitle,
+      ),
+      successBody: text(
+        field<string>("registration", "successBody"),
+        fallback.formCopy.successBody,
+      ),
+      againLabel: text(
+        field<string>("registration", "againLabel"),
+        fallback.formCopy.againLabel,
+      ),
+    },
 
-export const faq = [
-	{
-		q: "Czy wstęp na festiwal jest płatny?",
-		a: "Nie. Wstęp na cały festiwal jest wolny, w oba dni, bez biletów i bez rejestracji. Płatne nie są także pokazy ani degustacje herbaty.",
-	},
-	{
-		q: "Czy muszę się zapisywać?",
-		a: "Na pokazy, ceremonię herbaty i stanowiska kaligrafii — nie, wchodzisz i uczestniczysz. Zapisy dotyczą wyłącznie warsztatów, bo w każdym jest ograniczona liczba miejsc. Formularz znajdziesz w sekcji „Zapisy”.",
-	},
-	{
-		q: "Dla kogo jest ten festiwal?",
-		a: "Dla wszystkich — od dzieci po seniorów, od osób, które nigdy nie widziały taijiquan, po ćwiczących od lat. Program jest tak ułożony, żeby dało się przyjść na godzinę albo zostać na cały dzień.",
-	},
-	{
-		q: "Co zabrać na warsztaty?",
-		a: "Wygodny strój i obuwie na zmianę — sala jest halą sportową. Pędzle, tusz, papier, herbatę i broń treningową zapewniamy na miejscu. Nie musisz mieć nic własnego.",
-	},
-	{
-		q: "Czy mogę przyjść z małym dzieckiem?",
-		a: "Tak. Działa strefa rodzinna z matami i grami, dzieci do 7 lat pod opieką opiekuna. Warsztaty dla dzieci startują od 7 lat, ale na pokazy wiek nie ma znaczenia.",
-	},
-	{
-		q: "Czy obiekt jest dostępny dla osób z niepełnosprawnościami?",
-		a: "Tak. Wejście jest bez progów, sala znajduje się na parterze, a przy scenie wydzielamy miejsca dla osób na wózkach z pełnym widokiem na pokazy. Na miejscu jest dostępna toaleta.",
-	},
-	{
-		q: "Czy będzie transmisja online?",
-		a: "Tak, oba dni transmitujemy na żywo. Mini-odtwarzacz jest dostępny w prawym dolnym rogu tej strony — wystarczy rozwinąć panel „Transmisja”.",
-	},
-	{
-		q: "Czy mogę robić zdjęcia i nagrywać?",
-		a: "Tak, do celów prywatnych bez ograniczeń. Prosimy tylko o wyłączenie lampy błyskowej podczas ceremonii parzenia herbaty i pokazów z bronią. Media i twórcy komercyjni — prosimy o kontakt przed wydarzeniem.",
-	},
-	{
-		q: "Czy na miejscu będzie coś do jedzenia?",
-		a: "Będzie stoisko z herbatą i przekąskami. Pełną gastronomię znajdziesz w promieniu 300 m od sali — mamy listę lokali przy punkcie informacyjnym.",
-	},
-] as const;
+    location: {
+      venue: event.venue,
+      hours: list(
+        field<Array<{ day?: string; time?: string }>>("location", "hours"),
+        fallback.location.hours,
+        (g): OpeningHours => ({ day: g.day ?? "", time: g.time ?? "" }),
+      ),
+      notes: list(
+        field<Array<{ title?: string; body?: string }>>("location", "notes"),
+        fallback.location.notes,
+        (n): TravelNote => ({ title: n.title ?? "", body: n.body ?? "" }),
+      ),
+      mapsQuery: text(
+        field<string>("location", "mapsQuery"),
+        fallback.location.mapsQuery,
+      ),
+    },
+    locationCopy: {
+      eyebrow: text(
+        field<string>("location", "eyebrow"),
+        fallback.locationCopy.eyebrow,
+      ),
+      title: text(
+        field<string>("location", "title"),
+        fallback.locationCopy.title,
+      ),
+      lead: text(field<string>("location", "lead"), fallback.locationCopy.lead),
+      mapsLabel: text(
+        field<string>("location", "mapsLabel"),
+        fallback.locationCopy.mapsLabel,
+      ),
+      hoursTitle: text(
+        field<string>("location", "hoursTitle"),
+        fallback.locationCopy.hoursTitle,
+      ),
+    },
 
-/* ============================================================
-   KONTAKT
-   ============================================================ */
+    partnerGroups: list(
+      field<
+        Array<{
+          label?: string;
+          partners?: Array<{ name?: string; href?: string }>;
+        }>
+      >("partners", "groups"),
+      fallback.partnerGroups,
+      (g): PartnerGroup => ({
+        label: g.label ?? "",
+        partners: (g.partners ?? []).map((p) => ({
+          name: p.name ?? "",
+          href: p.href ?? null,
+        })),
+      }),
+    ),
+    partnersCopy: {
+      eyebrow: text(
+        field<string>("partners", "eyebrow"),
+        fallback.partnersCopy.eyebrow,
+      ),
+      title: text(
+        field<string>("partners", "title"),
+        fallback.partnersCopy.title,
+      ),
+      lead: text(field<string>("partners", "lead"), fallback.partnersCopy.lead),
+    },
 
-export const contact = {
-	organiser: "Fundacja Chen Taijiquan Rzeszów",
-	email: "kontakt@ksiegaimiecz.pl",
-	phone: "+48 17 000 00 00",
-	phoneHref: "+48170000000",
-	pressEmail: "media@ksiegaimiecz.pl",
-	/* `href: null` zamiast "#" — dopóki nie znamy prawdziwych adresów,
-	   kanały renderują się jako tekst, a nie jako linki prowadzące donikąd. */
-	channels: [
-		{ label: "Facebook", handle: "/ksiegaimiecz", href: null },
-		{ label: "Instagram", handle: "@ksiegaimiecz", href: null },
-		{ label: "YouTube", handle: "Księga i Miecz", href: null },
-	],
-	channelsPending: "Profile uruchomimy przed festiwalem.",
-	prototypeNote:
-		"Prototyp strony festiwalu. Dane kontaktowe, godziny i program warsztatów są przykładowe.",
-} as const;
+    faq: list(
+      field<Array<{ q?: string; a?: string }>>("faq", "questions"),
+      fallback.faq,
+      (p): Question => ({ q: p.q ?? "", a: p.a ?? "" }),
+    ),
+    faqCopy: {
+      eyebrow: text(field<string>("faq", "eyebrow"), fallback.faqCopy.eyebrow),
+      title: text(field<string>("faq", "title"), fallback.faqCopy.title),
+      lead: text(field<string>("faq", "lead"), fallback.faqCopy.lead),
+      ctaTitle: text(
+        field<string>("faq", "ctaTitle"),
+        fallback.faqCopy.ctaTitle,
+      ),
+      ctaLabel: text(
+        field<string>("faq", "ctaLabel"),
+        fallback.faqCopy.ctaLabel,
+      ),
+    },
 
-/* ============================================================
-   TRANSMISJA (mini-odtwarzacz)
-   ============================================================ */
+    contact: {
+      organiser: text(
+        field<string>("contact", "organiser"),
+        fallback.contact.organiser,
+      ),
+      email: text(field<string>("contact", "email"), fallback.contact.email),
+      phone,
+      phoneHref: dialable(phone),
+      channels: list(
+        field<Array<{ label?: string; href?: string }>>("contact", "channels"),
+        fallback.contact.channels.map((c) => channel(c.label, c.href)),
+        (k) => channel(k.label ?? "", k.href),
+      ).filter((c) => c.href !== ""),
+    },
+    contactCopy: {
+      eyebrow: text(
+        field<string>("contact", "eyebrow"),
+        fallback.contactCopy.eyebrow,
+      ),
+      title: text(
+        field<string>("contact", "title"),
+        fallback.contactCopy.title,
+      ),
+      lead: text(field<string>("contact", "lead"), fallback.contactCopy.lead),
+      channelsTitle: text(
+        field<string>("contact", "channelsTitle"),
+        fallback.contactCopy.channelsTitle,
+      ),
+      navTitle: text(
+        field<string>("contact", "navTitle"),
+        fallback.contactCopy.navTitle,
+      ),
+      backToTop: text(
+        field<string>("contact", "backToTop"),
+        fallback.contactCopy.backToTop,
+      ),
+    },
 
-export const stream = {
-	label: "Transmisja",
-	live: "Na żywo",
-	title: "Transmisja na żywo",
-	subtitle: `Scena główna · ${event.venue}`,
-	placeholder: "Miejsce na live YouTube",
-	showLabel: "Pokaż transmisję",
-	hideLabel: "Ukryj transmisję",
-} as const;
+    stream: {
+      live: text(field<string>("stream", "live"), fallback.stream.live),
+      title: text(field<string>("stream", "title"), fallback.stream.title),
+      placeholder: text(
+        field<string>("stream", "placeholder"),
+        fallback.stream.placeholder,
+      ),
+      showLabel: text(
+        field<string>("stream", "showLabel"),
+        fallback.stream.showLabel,
+      ),
+      hideLabel: text(
+        field<string>("stream", "hideLabel"),
+        fallback.stream.hideLabel,
+      ),
+
+      active: field<boolean>("stream", "active") ?? true,
+      embedUrl: youtubeEmbedUrl(field<string>("stream", "youtubeUrl")),
+    },
+  };
+}

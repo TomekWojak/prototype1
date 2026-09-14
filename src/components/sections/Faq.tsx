@@ -1,27 +1,15 @@
+"use client";
+
+import { useState } from "react";
 import {
   Button,
   Container,
+  cx,
   Section,
   SectionHeading,
 } from "@/components/ui";
-import { faq, faqCopy } from "@/lib/content";
+import type { Question, Content } from "@/lib/content";
 
-/* Treść merytoryczna sekcji (lead, wezwanie do kontaktu) mieszka w `faqCopy`
-   w content.ts — razem z pytaniami, których dotyczy. Tutaj zostają wyłącznie
-   etykiety kompozycyjne: nadkreślenie i rozbity na dwa człony tytuł, którego
-   nie da się zapisać jako zwykły łańcuch znaków. */
-const copy = {
-  eyebrow: "Pytania i odpowiedzi",
-  titleMain: "Najczęstsze",
-  titleAccent: "pytania",
-} as const;
-
-/**
- * Wskaźnik rozwinięcia: plus, który przy otwarciu obraca się w minus.
- *
- * Sam znak, bez kółka i obramowania — kółko z ramką przy każdym z dziewięciu
- * pytań robiło z listy zestaw kontrolek, a nie spis treści.
- */
 function PlusMark({ className }: { className?: string }) {
   return (
     <svg
@@ -40,58 +28,87 @@ function PlusMark({ className }: { className?: string }) {
   );
 }
 
-/**
- * FAQ na natywnych <details>/<summary>.
- *
- * Dlaczego bez Reactowego stanu: akordeon musi działać przy wyłączonym
- * JavaScripcie, a przeglądarka daje z pudełka obsługę klawiatury, rolę
- * i komunikat „rozwinięte/zwinięte” dla czytników ekranu. Własna implementacja
- * mogłaby to tylko zepsuć — i zamieniłaby sekcję w komponent kliencki.
- */
-export default function Faq() {
+export default function Faq({
+  faq,
+  faqCopy,
+}: {
+  faq: readonly Question[];
+  faqCopy: Content["faqCopy"];
+}) {
+  const [open, setOpen] = useState<ReadonlySet<string>>(new Set());
+
+  function toggle(question: string) {
+    setOpen((current) => {
+      const next = new Set(current);
+      if (!next.delete(question)) next.add(question);
+      return next;
+    });
+  }
+
   return (
     <Section id="faq" tone="soft" labelledBy="faq-tytul">
-      {/* Bez ornamentu. Enso stoi teraz w sekcji otwierającej jako pełnoprawny
-          element kompozycji — powtórzone tutaj przy kryciu 0,05 było ledwie
-          szarą plamą, czyli dokładnie tym, za co klient odrzucił poprzednią
-          wersję. Jeden gest na stronę wystarczy. */}
+      {}
       <Container className="relative">
         <SectionHeading
           id="faq-tytul"
-          eyebrow={copy.eyebrow}
+          eyebrow={faqCopy.eyebrow}
           align="center"
-          title={
-            <>
-              {copy.titleMain}{" "}
-              <span className="text-seal">{copy.titleAccent}</span>
-            </>
-          }
+          title={faqCopy.title}
           lead={faqCopy.lead}
         />
 
-        {/* ── AKORDEON ───────────────────────────────────────────
-            Cienkie kreski między pozycjami i po zewnętrznej stronie listy —
-            żadnych kart, ramek ani teł. Podział widać, a strona zostaje
-            jednym arkuszem papieru. */}
+        {}
         <div className="mx-auto mt-20 max-w-3xl divide-y divide-line border-y border-line">
-          {faq.map((item) => (
-            <details key={item.q} className="group">
-              <summary className="flex cursor-pointer list-none items-start justify-between gap-6 py-7 text-left font-display text-xl text-ink transition-colors hover:text-seal [&::-webkit-details-marker]:hidden">
-                <span className="text-balance">{item.q}</span>
+          {faq.map((item, index) => {
+            const isOpen = open.has(item.q);
+            const buttonId = `faq-pytanie-${index}`;
+            const panelId = `faq-odpowiedz-${index}`;
 
-                <PlusMark className="mt-2 h-5 w-5 shrink-0 text-ink-faint transition-transform duration-300 group-open:rotate-45" />
-              </summary>
+            return (
+              <div key={item.q}>
+                {}
+                <h3>
+                  <button
+                    type="button"
+                    id={buttonId}
+                    aria-expanded={isOpen}
+                    aria-controls={panelId}
+                    onClick={() => toggle(item.q)}
+                    className="flex w-full cursor-pointer items-start justify-between gap-6 py-7 text-left font-display text-xl text-ink transition-colors hover:text-seal"
+                  >
+                    <span className="text-balance">{item.q}</span>
 
-              <div className="pb-7 pr-10 text-base text-ink-muted">
-                {item.a}
+                    <PlusMark
+                      className={cx(
+                        "mt-2 h-5 w-5 shrink-0 text-ink-faint transition-transform duration-300",
+                        isOpen && "rotate-45",
+                      )}
+                    />
+                  </button>
+                </h3>
+
+                <div
+                  id={panelId}
+                  role="region"
+                  aria-labelledby={buttonId}
+                  inert={!isOpen}
+                  className={cx(
+                    "grid transition-[grid-template-rows] duration-300 ease-out",
+                    isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+                  )}
+                >
+                  <div className="min-h-0 overflow-hidden">
+                    <p className="pr-10 pb-7 text-base text-ink-muted">
+                      {item.a}
+                    </p>
+                  </div>
+                </div>
               </div>
-            </details>
-          ))}
+            );
+          })}
         </div>
 
-        {/* ── ZAPROSZENIE DO KONTAKTU ────────────────────────────
-            Bez karty i bez ramki: wystarczy odstęp i kontrast wielkości
-            między nagłówkiem a przyciskiem. */}
+        {}
         <div className="mt-16 text-center">
           <h3 className="text-2xl">{faqCopy.ctaTitle}</h3>
 

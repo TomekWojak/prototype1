@@ -9,13 +9,9 @@ import {
   Section,
   SectionHeading,
 } from "@/components/ui";
-import { contact, contactCopy, event, navLinks } from "@/lib/content";
 
-/* ============================================================
-   IKONY — rysowane ręcznie, bez plików i bez bibliotek.
-   Wszystkie dziedziczą kolor przez `currentColor`, więc jeden
-   zestaw obsługuje stan spoczynku i stan hover rodzica.
-   ============================================================ */
+import { navLinks } from "@/lib/fallback";
+import type { Content, FestivalEvent } from "@/lib/content";
 
 type IconProps = { className?: string };
 
@@ -75,7 +71,6 @@ function ArrowUpIcon({ className }: IconProps) {
   );
 }
 
-/* Litera „f” w okręgu — kreślona pociągnięciami, nie glifem fontu. */
 function FacebookIcon({ className }: IconProps) {
   return (
     <svg
@@ -135,60 +130,67 @@ function YouTubeIcon({ className }: IconProps) {
   );
 }
 
-/* Klucz to `label` z content.ts — Record wymusza kompletność zestawu,
-   więc dodanie kanału bez ikony nie przejdzie kompilacji. */
-type ChannelLabel = (typeof contact.channels)[number]["label"];
+function TikTokIcon({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      aria-hidden="true"
+      focusable="false"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="8.9" cy="16.2" r="3.9" />
+      <path d="M12.8 16.2V3.6" />
+      <path d="M12.8 4.2c.6 2.4 2.3 3.9 4.9 4.1" />
+    </svg>
+  );
+}
 
-const channelIcons: Record<ChannelLabel, ComponentType<IconProps>> = {
+const channelIcons: Record<string, ComponentType<IconProps> | undefined> = {
   Facebook: FacebookIcon,
   Instagram: InstagramIcon,
   YouTube: YouTubeIcon,
+  TikTok: TikTokIcon,
 };
 
-/* Etykiety są opisem interfejsu, wartości pochodzą wyłącznie z treści. */
-const facts = [
-  { label: "Termin", value: event.dateLabel },
-  { label: "Miejsce", value: event.venue },
-  { label: "Adres", value: event.street },
-  { label: "Wstęp", value: event.admission },
-];
-
-/* Jeden idiom linku na całą stopkę: kolor spoczynkowy dobiera miejsce,
-   ale reakcja na kursor jest wszędzie ta sama — czerwień pieczęci
-   i podkreślenie. Wcześniej mieszały się tutaj trzy różne wzorce. */
 const footerLink =
   "underline-offset-4 transition-colors duration-200 hover:text-seal hover:underline";
 
-/* Etykieta nad małym blokiem informacji — kapitaliki, szarość, rozstrzelenie.
-   Powtarza się w trzech miejscach, więc stoi w jednym. */
 const microLabel = "text-xs uppercase tracking-[0.18em] text-ink-faint";
 
-/* ============================================================
-   KONTAKT I STOPKA
+export default function Contact({
+  event,
+  contact,
+  contactCopy,
+}: {
+  event: FestivalEvent;
+  contact: Content["contact"];
+  contactCopy: Content["contactCopy"];
+}) {
+  const year = event.dateIso.slice(0, 4);
 
-   Sekcja była wcześniej ciemną laką ze złotem — jedyną taką na stronie.
-   Domknięcie serwisu czarnym pasem to odruch z szablonów; tutaj stopka
-   jest tym samym białym papierem co reszta, a od treści oddziela ją
-   wyłącznie cienka kreska.
-   ============================================================ */
+  const facts = [
+    { label: "Termin", value: event.date },
+    { label: "Miejsce", value: event.venue },
+    { label: "Wstęp", value: event.admission },
+  ];
 
-export default function Contact() {
   return (
     <Section id="kontakt" tone="paper" as="footer" labelledBy="kontakt-tytul">
       <Container>
         <SectionHeading
           id="kontakt-tytul"
-          eyebrow="Kontakt"
-          title={
-            <>
-              Napisz do <span className="text-seal">nas</span>
-            </>
-          }
+          eyebrow={contactCopy.eyebrow}
+          title={contactCopy.title}
           lead={contactCopy.lead}
         />
 
         <div className="mt-20 grid gap-14 lg:grid-cols-3">
-          {/* ── Dane kontaktowe ───────────────────────────── */}
+          {}
           <div>
             <Eyebrow>Organizator</Eyebrow>
 
@@ -222,53 +224,43 @@ export default function Contact() {
                 </a>
               </li>
             </ul>
-
-            <div className="mt-10">
-              <p className={microLabel}>Media i patronaty</p>
-              <a
-                href={`mailto:${contact.pressEmail}`}
-                className={cx(
-                  "mt-1 inline-flex min-h-11 items-center gap-3 text-base text-ink-soft",
-                  footerLink,
-                )}
-              >
-                <EnvelopeIcon className="h-5 w-5 shrink-0 text-ink-faint" />
-                <span className="break-all">{contact.pressEmail}</span>
-              </a>
-            </div>
           </div>
 
-          {/* ── Kanały ────────────────────────────────────────
-              Adresy profili jeszcze nie istnieją (`href: null`), więc pozycje
-              są tekstem, a nie linkami prowadzącymi donikąd. Powód mówimy raz,
-              pod listą — nie przy każdej pozycji z osobna. */}
+          {}
           <div>
             <Eyebrow>{contactCopy.channelsTitle}</Eyebrow>
 
-            <ul className="mt-6 space-y-4">
+            <ul className="mt-6 space-y-2">
               {contact.channels.map((channel) => {
                 const Icon = channelIcons[channel.label];
 
                 return (
-                  <li key={channel.label} className="flex items-center gap-4">
-                    <Icon className="h-5 w-5 shrink-0 text-ink-faint" />
-                    <span className="text-base text-ink-soft">
-                      {channel.label}
-                    </span>
-                    <span className="truncate text-xs text-ink-faint">
-                      {channel.handle}
-                    </span>
+                  <li key={channel.label}>
+                    <a
+                      href={channel.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={cx(
+                        "inline-flex min-h-11 items-center gap-4 text-base text-ink-soft",
+                        footerLink,
+                      )}
+                    >
+                      {Icon ? (
+                        <Icon className="h-5 w-5 shrink-0 text-ink-faint" />
+                      ) : null}
+                      <span>{channel.label}</span>
+                      <span className="sr-only">
+                        {" "}
+                        (otwiera się w nowej karcie)
+                      </span>
+                    </a>
                   </li>
                 );
               })}
             </ul>
-
-            <p className="mt-6 text-xs text-ink-faint">
-              {contact.channelsPending}
-            </p>
           </div>
 
-          {/* ── Skrót nawigacyjny i fakty ─────────────────── */}
+          {}
           <div>
             <Eyebrow>{contactCopy.navTitle}</Eyebrow>
 
@@ -296,7 +288,7 @@ export default function Contact() {
           </div>
         </div>
 
-        {/* ── Dolny pasek ─────────────────────────────────── */}
+        {}
         <InkRule className="mt-20" />
 
         <div className="flex flex-col gap-4 pt-10 sm:flex-row sm:items-center sm:justify-between">
@@ -306,18 +298,15 @@ export default function Contact() {
               <span className="text-sm text-ink-muted">
                 {event.name} · {event.subtitle}
               </span>
-              {/* Rok bierzemy z daty wydarzenia, nie z zegara przeglądarki —
-                  `new Date()` rozjechałoby render serwera z klientem. */}
+              {}
               <span className="text-xs text-ink-faint">
-                © {event.dateIso.slice(0, 4)} {contact.organiser}
+                © {year ? `${year} ` : ""}
+                {contact.organiser}
               </span>
             </span>
           </div>
 
           <div className="flex flex-col gap-3 sm:items-end">
-            <p className="max-w-sm text-xs text-ink-faint sm:text-right">
-              {contact.prototypeNote}
-            </p>
             <a
               href="#hero"
               className={cx(

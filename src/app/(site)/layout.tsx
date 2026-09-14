@@ -1,10 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Lato, Tinos } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 
-/* Tinos — nagłówki. Metrycznie zgodny z Times New Roman, którego używa
-   chen.rzeszow.pl. Spokojny szeryf bez „projektanckiego” charakteru:
-   Playfair, którego było tu wcześniej, czytał się jako krój z szablonu. */
 const tinos = Tinos({
   variable: "--font-tinos",
   weight: ["400", "700"],
@@ -12,8 +9,6 @@ const tinos = Tinos({
   display: "swap",
 });
 
-/* Lato — dokładnie ten sam krój tekstowy co na stronie stowarzyszenia,
-   żeby obie witryny czytały się jako jedna rodzina. */
 const lato = Lato({
   variable: "--font-lato",
   weight: ["300", "400", "700"],
@@ -57,7 +52,7 @@ export const viewport: Viewport = {
   colorScheme: "light",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function SiteLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="pl"
