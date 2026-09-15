@@ -17,7 +17,7 @@ export const lokalizacja = defineType({
       title: "Duży tytuł sekcji",
       type: "string",
       description:
-        "Napis, który widać jako największy tekst tej sekcji. Ostatnie słowo strona sama pokoloruje na czerwono — przy „Gdzie i kiedy” czerwone będzie „kiedy”.",
+        "Napis, który widać jako największy tekst tej sekcji. Ostatnie słowo strona sama pokoloruje na czerwono - przy „Gdzie i kiedy” czerwone będzie „kiedy”.",
     }),
     defineField({
       name: "lead",
@@ -36,7 +36,7 @@ export const lokalizacja = defineType({
     }),
     defineField({
       name: "godziny",
-      title: "Godziny otwarcia — dni",
+      title: "Godziny otwarcia - dni",
       type: "array",
       description:
         "Opcjonalne. Jeśli nic tu nie wpiszesz, cała tabelka razem z nagłówkiem NIE pojawi się na stronie.",
@@ -71,7 +71,7 @@ export const lokalizacja = defineType({
       title: "Wskazówki praktyczne",
       type: "array",
       description:
-        "Kafelki pod godzinami. Dostępność, dojazd, parking, ile czasu zająć na zwiedzanie — pytania, które uczestnik i tak zada.",
+        "Kafelki pod godzinami. Dostępność, dojazd, parking, ile czasu zająć na zwiedzanie - pytania, które uczestnik i tak zada.",
       of: [
         defineArrayMember({
           type: "object",

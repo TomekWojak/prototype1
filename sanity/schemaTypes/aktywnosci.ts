@@ -1,5 +1,4 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
-
 export const aktywnosci = defineType({
   name: "aktywnosci",
   title: "Aktywności",
@@ -17,7 +16,7 @@ export const aktywnosci = defineType({
       title: "Duży tytuł sekcji",
       type: "string",
       description:
-        "Napis, który widać jako największy tekst tej sekcji. Ostatnie słowo strona sama pokoloruje na czerwono — przy „Aktywności festiwalu” czerwone będzie „festiwalu”.",
+        "Napis, który widać jako największy tekst tej sekcji. Ostatnie słowo strona sama pokoloruje na czerwono - przy „Aktywności festiwalu” czerwone będzie „festiwalu”.",
     }),
     defineField({
       name: "lead",
@@ -32,7 +31,7 @@ export const aktywnosci = defineType({
       title: "Kafelki z aktywnościami",
       type: "array",
       description:
-        "Każdy kafelek to jedna atrakcja: nazwa, opis i chiński znak, który strona dokłada sama — masz do wpisania tylko nazwę i opis. Znaki są ogólne („sztuka”, „święto”, „harmonia”) i idą po kolei, więc dopisanie kafelka w środku listy przesunie je na kolejnych. Układają się w dwie kolumny; kolejność przeciągnij myszą.",
+        "Każdy kafelek to jedna atrakcja: nazwa, opis i chiński znak, który strona dokłada sama - masz do wpisania tylko nazwę i opis. Znaki są ogólne („sztuka”, „święto”, „harmonia”) i idą po kolei, więc dopisanie kafelka w środku listy przesunie je na kolejnych. Układają się w dwie kolumny; kolejność przeciągnij myszą.",
       of: [
         defineArrayMember({
           type: "object",
@@ -50,7 +49,7 @@ export const aktywnosci = defineType({
               type: "text",
               rows: 8,
               description:
-                "Tekst kafelka. Jeśli chcesz listę punktów, wpisz je jeden pod drugim (Enter po każdym) — strona zachowa ten podział.",
+                "Tekst kafelka. Jeśli chcesz listę punktów, wpisz je jeden pod drugim (Enter po każdym) - strona zachowa ten podział.",
             }),
           ],
           preview: {
@@ -61,21 +60,21 @@ export const aktywnosci = defineType({
     }),
     defineField({
       name: "zamkniecieTytul",
-      title: "Notka na końcu sekcji — nagłówek",
+      title: "Notka na końcu sekcji - nagłówek",
       type: "string",
       description:
         "Krótki blok pod kafelkami, oddzielony odstępem. Miejsce na jedną ważną uwagę o programie, np. „Pokazy główne powtarzamy w oba dni”. Zostaw puste pola, jeśli notka nie jest potrzebna.",
     }),
     defineField({
       name: "zamkniecieTresc",
-      title: "Notka na końcu sekcji — tekst",
+      title: "Notka na końcu sekcji - tekst",
       description: "Akapit pod nagłówkiem notki.",
       type: "text",
       rows: 3,
     }),
     defineField({
       name: "zamkniecieCta",
-      title: "Notka na końcu sekcji — napis na przycisku",
+      title: "Notka na końcu sekcji - napis na przycisku",
       type: "string",
       description:
         "Przycisk pod notką. Prowadzi do sekcji Warsztaty, np. „Zobacz warsztaty z zapisami”.",

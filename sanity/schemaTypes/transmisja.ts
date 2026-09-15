@@ -11,14 +11,14 @@ export const transmisja = defineType({
       type: "boolean",
       initialValue: true,
       description:
-        "Panel wysuwany z prawego dolnego rogu strony. Wyłącz, gdy nie ma czego transmitować — zniknie wtedy razem z przyciskiem.",
+        "Panel wysuwany z prawego dolnego rogu strony. Wyłącz, gdy nie ma czego transmitować - zniknie wtedy razem z przyciskiem.",
     }),
     defineField({
       name: "adresYouTube",
       title: "Link do transmisji na YouTube",
       type: "url",
       description:
-        "Wklej odnośnik w dowolnej postaci — z paska adresu, z przycisku „Udostępnij”, ze strony transmisji na żywo. Strona sama wyciągnie z niego film. Puste pole = w panelu zostaje pole zastępcze z informacją, że transmisja jeszcze nie ruszyła.",
+        "Wklej odnośnik w dowolnej postaci - z paska adresu, z przycisku „Udostępnij”, ze strony transmisji na żywo. Strona sama wyciągnie z niego film. Puste pole = w panelu zostaje pole zastępcze z informacją, że transmisja jeszcze nie ruszyła.",
     }),
     defineField({
       name: "naZywo",
@@ -54,7 +54,7 @@ export const transmisja = defineType({
         ? "Panel ukryty"
         : id
           ? `Film ${id}`
-          : "Pole zastępcze — brak filmu",
+          : "Pole zastępcze - brak filmu",
     }),
   },
 });

@@ -8,6 +8,7 @@ import { oFestiwalu } from "./oFestiwalu";
 import { partnerzy } from "./partnerzy";
 import { transmisja } from "./transmisja";
 import { warsztaty } from "./warsztaty";
+import { wsparcie } from "./wsparcie";
 import { wydarzenie } from "./wydarzenie";
 import { zapisy } from "./zapisy";
 
@@ -19,6 +20,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   zapisy,
   lokalizacja,
   partnerzy,
+  wsparcie,
   faq,
   kontakt,
   transmisja,

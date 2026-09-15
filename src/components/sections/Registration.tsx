@@ -13,11 +13,12 @@ import {
 import { validateField } from "@/lib/registration";
 import type { Content, FestivalEvent } from "@/lib/content";
 
-type FieldName = "firstName" | "lastName" | "email" | "phone" | "workshop";
+type FieldName =
+  "firstName" | "lastName" | "email" | "phone" | "workshop" | "consent";
 type FieldConfig = {
   name: FieldName;
   label: string;
-  control?: "input" | "select";
+  control?: "input" | "select" | "checkbox";
   type?: "text" | "email" | "tel";
   autoComplete?: string;
   placeholder: string;
@@ -61,7 +62,20 @@ const fields: readonly FieldConfig[] = [
     control: "select",
     placeholder: "Wybierz warsztat",
   },
+  /* Zgoda zostaje w tej samej tablicy, choć rysuje się osobno: dzięki temu
+     obejmuje ją walidacja, podsumowanie błędów, ustawianie fokusu i — przez
+     wspólne `FIELD_NAMES` — sprawdzenie po stronie serwera. */
+  {
+    name: "consent",
+    label: "Zgoda na przetwarzanie danych",
+    control: "checkbox",
+    placeholder: "",
+  },
 ];
+
+/* Wszystko poza zgodą — ta ma własny kształt i własne miejsce, tuż nad
+   przyciskiem wysyłki. */
+const textFields = fields.filter((field) => field.control !== "checkbox");
 
 function fieldId(name: FieldName) {
   return `zapisy-${name}`;
@@ -149,6 +163,7 @@ const emptyValues: Values = {
   email: "",
   phone: "",
   workshop: "",
+  consent: "",
 };
 
 const inputBase =
@@ -502,10 +517,78 @@ export default function Registration({
 
                 <div className="mt-10 space-y-8">
                   <div className="grid gap-8 sm:grid-cols-2">
-                    {fields.slice(0, 2).map(renderField)}
+                    {textFields.slice(0, 2).map(renderField)}
                   </div>
-                  {fields.slice(2).map(renderField)}
+                  {textFields.slice(2).map(renderField)}
                 </div>
+                {/* ZGODA NA PRZETWARZANIE DANYCH
+                    Pole wyboru rysowane osobno, bo ma inny kształt niż pola
+                    tekstowe — ale zostaje w tablicy `fields`, więc obejmuje je
+                    walidacja, podsumowanie błędów i sprawdzenie na serwerze. */}
+                {(() => {
+                  const message = errors.consent;
+                  const describedBy = errorId("consent");
+
+                  return (
+                    <div className="mt-10">
+                      <div className="flex items-start gap-3">
+                        <input
+                          ref={(node) => {
+                            inputRefs.current.consent = node;
+                          }}
+                          id={fieldId("consent")}
+                          name="consent"
+                          type="checkbox"
+                          checked={values.consent === "true"}
+                          onChange={(changeEvent) =>
+                            handleChange(
+                              "consent",
+                              changeEvent.target.checked ? "true" : "",
+                            )
+                          }
+                          onBlur={() => handleBlur("consent")}
+                          aria-invalid={message ? "true" : undefined}
+                          aria-describedby={message ? describedBy : undefined}
+                          className={cx(
+                            "mt-1 h-4 w-4 shrink-0 accent-seal",
+                            message && "outline outline-seal",
+                          )}
+                        />
+                        <label
+                          htmlFor={fieldId("consent")}
+                          className="text-sm text-ink-muted"
+                        >
+                          {formCopy.consentLabel}{" "}
+                          <span aria-hidden="true" className="text-seal">
+                            *
+                          </span>{" "}
+                          {formCopy.consentUrl ? (
+                            <>
+                              Szczegóły w naszej{" "}
+                              <a
+                                href={formCopy.consentUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="underline decoration-line underline-offset-4 transition-colors hover:text-seal hover:decoration-seal"
+                              >
+                                {formCopy.consentLinkLabel}
+                              </a>
+                              <span className="sr-only">
+                                {" "}
+                                (otwiera się w nowej karcie)
+                              </span>
+                              .
+                            </>
+                          ) : null}
+                        </label>
+                      </div>
+                      {message && (
+                        <FieldError id={describedBy} message={message} />
+                      )}
+                    </div>
+                  );
+                })()}
+
                 <div
                   aria-hidden="true"
                   className="absolute left-[-9999px] h-0 w-0 overflow-hidden"

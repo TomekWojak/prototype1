@@ -59,7 +59,7 @@ export const wydarzenie = defineType({
       group: "nazwa",
       of: [defineArrayMember({ type: "string" })],
       description:
-        "Wyświetlają się w jednej linii, rozdzielone pionowymi kreskami — np. data, miejsce, „Wstęp wolny”. NAJWYŻEJ TRZY: czwarta i kolejne się nie pokażą, bo pasek przestaje mieścić się w linii. Każdy wpis to kilka słów, nie zdanie.",
+        "Wyświetlają się w jednej linii, rozdzielone pionowymi kreskami - np. data, miejsce, „Wstęp wolny”. NAJWYŻEJ TRZY: czwarta i kolejne się nie pokażą, bo pasek przestaje mieścić się w linii. Każdy wpis to kilka słów, nie zdanie.",
     }),
 
     defineField({
@@ -68,7 +68,7 @@ export const wydarzenie = defineType({
       type: "string",
       group: "termin",
       description:
-        "W dowolnym zapisie — „25.10.2026”, „24–25 października 2026”, jak wolisz. Strona pokazuje dokładnie to, co tu wpiszesz, i w każdym miejscu to samo: na górze strony, przy formularzu, w menu na telefonie i w stopce.",
+        "W dowolnym zapisie - „25.10.2026”, „24–25 października 2026”, jak wolisz. Strona pokazuje dokładnie to, co tu wpiszesz, i w każdym miejscu to samo: na górze strony, przy formularzu, w menu na telefonie i w stopce.",
     }),
     defineField({
       name: "wstep",
@@ -85,7 +85,7 @@ export const wydarzenie = defineType({
       type: "string",
       group: "miejsce",
       description:
-        "Jedno pole na całą stronę. Sama nazwa obiektu („Sala Sportowa SP nr 18”) albo nazwa z adresem („Sala Sportowa SP nr 18, ul. Bł. Karoliny 21”) — jeśli adres ma być widoczny, dopisz go tutaj. Wskazówki dojazdu i przycisk do Map Google mają własne pola w sekcji „Lokalizacja”.",
+        "Jedno pole na całą stronę. Sama nazwa obiektu („Sala Sportowa SP nr 18”) albo nazwa z adresem („Sala Sportowa SP nr 18, ul. Bł. Karoliny 21”) - jeśli adres ma być widoczny, dopisz go tutaj. Wskazówki dojazdu i przycisk do Map Google mają własne pola w sekcji „Lokalizacja”.",
     }),
 
     defineField({
@@ -110,7 +110,7 @@ export const wydarzenie = defineType({
       type: "string",
       group: "przyciski",
       description:
-        "Widoczny przez cały czas, więc musi być krótki — np. „Zapisz się”. Prowadzi tam, gdzie przycisk czerwony.",
+        "Widoczny przez cały czas, więc musi być krótki - np. „Zapisz się”. Prowadzi tam, gdzie przycisk czerwony.",
     }),
   ],
   preview: {

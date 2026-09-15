@@ -12,6 +12,7 @@ import {
 
 import { navLinks } from "@/lib/fallback";
 import type { Content, FestivalEvent } from "@/lib/content";
+import { TRANSFER_ID } from "@/components/sections/Support";
 
 type IconProps = { className?: string };
 
@@ -173,6 +174,14 @@ export default function Contact({
 }) {
   const year = event.dateIso.slice(0, 4);
 
+  /* Etykiety są opisem interfejsu, numery przychodzą z panelu. */
+  const transferRows = [
+    { label: "NIP", value: contact.taxId },
+    { label: "KRS", value: contact.courtRegister },
+    { label: "REGON", value: contact.statisticalId },
+    { label: "Konto bankowe", value: contact.bankAccount },
+  ].filter((row) => row.value.trim() !== "");
+
   const facts = [
     { label: "Termin", value: event.date },
     { label: "Miejsce", value: event.venue },
@@ -224,6 +233,26 @@ export default function Contact({
                 </a>
               </li>
             </ul>
+
+            {/* Dane do przelewu — cel przycisku z banera „Przekaż nam 1,5%”.
+                Każdy wiersz pojawia się tylko wtedy, gdy jest wypełniony:
+                pusty numer konta w stopce fundacji wygląda na zaniedbanie. */}
+            {transferRows.length > 0 && (
+              <div id={TRANSFER_ID} className="mt-10 scroll-mt-28">
+                <p className={microLabel}>{contact.transferTitle}</p>
+
+                <dl className="mt-3 flex flex-col gap-2">
+                  {transferRows.map((row) => (
+                    <div key={row.label}>
+                      <dt className="text-xs text-ink-faint">{row.label}</dt>
+                      <dd className="text-base text-ink-soft tabular-nums">
+                        {row.value}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            )}
           </div>
 
           {}

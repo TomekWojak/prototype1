@@ -17,7 +17,7 @@ export const warsztaty = defineType({
       title: "Duży tytuł sekcji",
       type: "string",
       description:
-        "Napis, który widać jako największy tekst tej sekcji. Ostatnie słowo strona sama pokoloruje na czerwono — przy „Warsztaty z zapisami” czerwone będzie „zapisami”.",
+        "Napis, który widać jako największy tekst tej sekcji. Ostatnie słowo strona sama pokoloruje na czerwono - przy „Warsztaty z zapisami” czerwone będzie „zapisami”.",
     }),
     defineField({
       name: "lead",
@@ -32,7 +32,7 @@ export const warsztaty = defineType({
       title: "Lista warsztatów",
       type: "array",
       description:
-        "Każdy warsztat to jeden wiersz: nazwa, opis i — po prawej — drobne informacje praktyczne. Kolejność przeciągnij myszą.",
+        "Każdy warsztat to jeden wiersz: nazwa, opis i - po prawej - drobne informacje praktyczne. Kolejność przeciągnij myszą.",
       of: [
         defineArrayMember({
           type: "object",
@@ -88,7 +88,7 @@ export const warsztaty = defineType({
               title: "Liczba miejsc",
               type: "number",
               description:
-                "Opcjonalna. Sama liczba, bez słowa „miejsc” — odmianę („24 miejsca”, „12 miejsc”) strona dopisze sama. Puste pole znaczy „nie podajemy limitu”, a nie „zero miejsc”.",
+                "Opcjonalna. Sama liczba, bez słowa „miejsc” - odmianę („24 miejsca”, „12 miejsc”) strona dopisze sama. Puste pole znaczy „nie podajemy limitu”, a nie „zero miejsc”.",
             }),
           ],
           preview: {
@@ -110,13 +110,13 @@ export const warsztaty = defineType({
     }),
     defineField({
       name: "zasadyTytul",
-      title: "Zasady zapisów — nagłówek",
+      title: "Zasady zapisów - nagłówek",
       description: "Nagłówek listy pod warsztatami, np. „Jak działają zapisy”.",
       type: "string",
     }),
     defineField({
       name: "zasady",
-      title: "Zasady zapisów — punkty",
+      title: "Zasady zapisów - punkty",
       type: "array",
       of: [defineArrayMember({ type: "string" })],
       description:

@@ -1,6 +1,6 @@
 # Schematy treści — Sanity
 
-Dziesięć dokumentów pojedynczych, po jednym na sekcję strony. Panel odwzorowuje
+Jedenaście dokumentów pojedynczych, po jednym na sekcję strony. Panel odwzorowuje
 stronę: kto chce poprawić tekst w Warsztatach, znajdzie go pod „Warsztaty”.
 
 ```
@@ -14,6 +14,7 @@ sanity/
 │   ├── zapisy.ts       teksty wokół formularza
 │   ├── lokalizacja.ts  godziny, wskazówki dojazdu, zapytanie do Map
 │   ├── partnerzy.ts    grupy partnerów i logotypy
+│   ├── wsparcie.ts     baner „Przekaż nam 1,5%”
 │   ├── faq.ts          pytania i odpowiedzi
 │   ├── kontakt.ts      dane kontaktowe, kanały, stopka
 │   └── transmisja.ts   panel z odtwarzaczem
@@ -25,15 +26,15 @@ sanity/
 W panelu ląduje to, co zmienia **treść**. To, co zmienia **konstrukcję**, zostaje
 w `src/lib/fallback.ts`:
 
-| zostaje w kodzie | dlaczego |
-|---|---|
-| `navLinks` | etykiety są sparowane z identyfikatorami sekcji (`#warsztaty`); literówka w panelu zepsułaby wszystkie odnośniki bez ostrzeżenia |
-| `event.nameCjk` | 文武 na pieczęci, element tożsamości |
-| `activityGlyphs` | znaki przy kafelkach Aktywności — patrz niżej |
-| `pillarDecorations` | znak, pinyin i cechy przy filarach Wen i Wu — patrz niżej |
-| `defaultChannelUrls` | zapasowe adresy Facebooka, Instagrama i YouTube — patrz niżej |
-| etykiety dostępności w pasku | „Przejdź do treści”, „Otwórz/Zamknij menu”, nazwa nawigacji — czyta je czytnik ekranu i klawiatura, nie są treścią marketingową |
-| pola formularza | dodanie pola w panelu nie stworzy jego obsługi po stronie serwera |
+| zostaje w kodzie             | dlaczego                                                                                                                         |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `navLinks`                   | etykiety są sparowane z identyfikatorami sekcji (`#warsztaty`); literówka w panelu zepsułaby wszystkie odnośniki bez ostrzeżenia |
+| `event.nameCjk`              | 文武 na pieczęci, element tożsamości                                                                                             |
+| `activityGlyphs`             | znaki przy kafelkach Aktywności — patrz niżej                                                                                    |
+| `pillarDecorations`          | znak, pinyin i cechy przy filarach Wen i Wu — patrz niżej                                                                        |
+| `defaultChannelUrls`         | zapasowe adresy Facebooka, Instagrama i YouTube — patrz niżej                                                                    |
+| etykiety dostępności w pasku | „Przejdź do treści”, „Otwórz/Zamknij menu”, nazwa nawigacji — czyta je czytnik ekranu i klawiatura, nie są treścią marketingową  |
+| pola formularza              | dodanie pola w panelu nie stworzy jego obsługi po stronie serwera                                                                |
 
 ### Znaki chińskie przy Aktywnościach
 
@@ -84,12 +85,12 @@ Puste pole „Adres profilu” nie zostawia już martwej pozycji w stopce. Kana�
 adresu prowadzi na profil **organizatora**, dobierany po nazwie serwisu
 (`defaultChannelUrls` w `fallback.ts`):
 
-| serwis | adres zapasowy |
-|---|---|
-| Facebook | strona Chen Taijiquan Rzeszów |
+| serwis    | adres zapasowy                                                                             |
+| --------- | ------------------------------------------------------------------------------------------ |
+| Facebook  | strona Chen Taijiquan Rzeszów                                                              |
 | Instagram | wyszukiwarka Instagrama dla frazy „chen taijiquan rzeszów” — profilu nie udało się ustalić |
-| YouTube | strona główna serwisu |
-| TikTok | brak — kanał bez adresu nie pojawi się na stronie |
+| YouTube   | strona główna serwisu                                                                      |
+| TikTok    | brak — kanał bez adresu nie pojawi się na stronie                                          |
 
 Serwis, dla którego nie znamy ani własnego, ani zapasowego adresu, **wypada
 z listy**. Sama nazwa serwisu bez odnośnika nie ma po co stać w stopce, a link
@@ -129,30 +130,32 @@ automatyczne odtwarzanie z dźwiękiem i bez niego film by nie ruszył.
 
 ## Mapowanie pól
 
-| dokument | pole w Sanity | obecnie w `fallback.ts` |
-|---|---|---|
-| wydarzenie | `nazwa`, `podtytul`, `nadkreslenie`, `tagline`, `lead`, `fakty` | `event.name`, `.subtitle`, `.kicker`, `.tagline`, `.lead`, `.facts` |
-| | `data`, `wstep` | `event.date`, `.admission` |
-| | `miejsce` | `event.venue` |
-| | `przyciskGlowny`, `przyciskDrugi`, `przyciskWPasku` | `event.ctaPrimary`, `.ctaSecondary`, `.ctaHeader` |
-| oFestiwalu | `nadkreslenie`, `tytul` | `aboutCopy` |
-| | `filary[]` — nazwa, podtytuł, opis | `pillars` |
-| | `cytatTekst`, `cytatNota` | `aboutQuote.text`, `.note` |
-| | `credo[]`, `credoZamkniecie` | `modernCreed`, `modernCreedClosing` |
-| | `odbiorcy[]` | `audiences` |
-| aktywnosci | `lead`, `pozycje[]` | `activitiesCopy.lead`, `activities` |
-| | `zamkniecieTytul`, `zamkniecieTresc`, `zamkniecieCta` | `activitiesCopy.closing*` |
-| warsztaty | `lead`, `pozycje[]` | `workshopsCopy.lead`, `workshops` |
-| | `zasadyTytul`, `zasady[]`, `ctaEtykieta` | `workshopsCopy.rulesTitle`, `.rules`, `.ctaLabel` |
-| zapisy | wszystkie pola, w tym `krokiTytul` i `kroki[]` — nagłówek + opis | `formCopy` |
-| lokalizacja | `lead`, `godzinyTytul`, `godziny[]`, `notatki[]` | `locationCopy.lead`, `.hoursTitle`, `location.hours`, `.notes` |
-| | `zapytanieMapy`, `etykietaMapy` | `location.mapsQuery`, `locationCopy.mapsLabel` |
-| partnerzy | `lead`, `grupy[]`, `nota` | `partnersCopy.lead`, `partnerGroups`, `partnersCopy.note` |
-| faq | `lead`, `pytania[]`, `ctaTytul`, `ctaEtykieta` | `faqCopy.*`, `faq` |
-| kontakt | `lead`, `organizator`, `email`, `telefon` | `contact.*`, `contactCopy.lead` |
-| | `kanalyTytul`, `kanaly[]` — serwis + adres | `contactCopy.channelsTitle`, `contact.channels` |
-| | `nawigacjaTytul`, `powrotNaGore` | `contactCopy.navTitle`, `.backToTop` |
-| transmisja | `aktywna`, `adresYouTube` + napisy | `stream` |
+| dokument    | pole w Sanity                                                    | obecnie w `fallback.ts`                                             |
+| ----------- | ---------------------------------------------------------------- | ------------------------------------------------------------------- |
+| wydarzenie  | `nazwa`, `podtytul`, `nadkreslenie`, `tagline`, `lead`, `fakty`  | `event.name`, `.subtitle`, `.kicker`, `.tagline`, `.lead`, `.facts` |
+|             | `data`, `wstep`                                                  | `event.date`, `.admission`                                          |
+|             | `miejsce`                                                        | `event.venue`                                                       |
+|             | `przyciskGlowny`, `przyciskDrugi`, `przyciskWPasku`              | `event.ctaPrimary`, `.ctaSecondary`, `.ctaHeader`                   |
+| oFestiwalu  | `nadkreslenie`, `tytul`                                          | `aboutCopy`                                                         |
+|             | `filary[]` — nazwa, podtytuł, opis                               | `pillars`                                                           |
+|             | `cytatTekst`, `cytatNota`                                        | `aboutQuote.text`, `.note`                                          |
+|             | `credo[]`, `credoZamkniecie`                                     | `modernCreed`, `modernCreedClosing`                                 |
+|             | `odbiorcy[]`                                                     | `audiences`                                                         |
+| aktywnosci  | `lead`, `pozycje[]`                                              | `activitiesCopy.lead`, `activities`                                 |
+|             | `zamkniecieTytul`, `zamkniecieTresc`, `zamkniecieCta`            | `activitiesCopy.closing*`                                           |
+| warsztaty   | `lead`, `pozycje[]`                                              | `workshopsCopy.lead`, `workshops`                                   |
+|             | `zasadyTytul`, `zasady[]`, `ctaEtykieta`                         | `workshopsCopy.rulesTitle`, `.rules`, `.ctaLabel`                   |
+| zapisy      | wszystkie pola, w tym `krokiTytul` i `kroki[]` — nagłówek + opis | `formCopy`                                                          |
+| lokalizacja | `lead`, `godzinyTytul`, `godziny[]`, `notatki[]`                 | `locationCopy.lead`, `.hoursTitle`, `location.hours`, `.notes`      |
+|             | `zapytanieMapy`, `etykietaMapy`                                  | `location.mapsQuery`, `locationCopy.mapsLabel`                      |
+| partnerzy   | `lead`, `grupy[]`, `nota`                                        | `partnersCopy.lead`, `partnerGroups`, `partnersCopy.note`           |
+| faq         | `lead`, `pytania[]`, `ctaTytul`, `ctaEtykieta`                   | `faqCopy.*`, `faq`                                                  |
+| wsparcie    | `nadkreslenie`, `tytul`, `tresc`, `ctaEtykieta`                  | `supportCopy`                                                       |
+| kontakt     | `lead`, `organizator`, `email`, `telefon`                        | `contact.*`, `contactCopy.lead`                                     |
+|             | `kanalyTytul`, `kanaly[]` — serwis + adres                       | `contactCopy.channelsTitle`, `contact.channels`                     |
+|             | `nawigacjaTytul`, `powrotNaGore`                                 | `contactCopy.navTitle`, `.backToTop`                                |
+|             | `daneTytul`, `nip`, `krs`, `regon`, `konto`                      | `contact.transferTitle`, `.taxId`, `.courtRegister`, `.statisticalId`, `.bankAccount` |
+| transmisja  | `aktywna`, `adresYouTube` + napisy                               | `stream`                                                            |
 
 Miejsce w sekcji Lokalizacja **nie ma własnego pola** — bierze się z dokumentu
 „Wydarzenie”, żeby nie mogło rozjechać się z paskiem faktów i stopką.
@@ -248,10 +251,10 @@ One nie blokują zapisu — ograniczają tylko podpowiadane wartości.
 
 ## Czego jeszcze nie podpięto
 
-| pole w CMS | dlaczego |
-|---|---|
-| `partner.logo` | strona pokazuje samą nazwę; obsługa obrazów wymaga `@sanity/image-url` |
-| `partner.adres` | kafelki partnerów nie są jeszcze odnośnikami |
+| pole w CMS      | dlaczego                                                               |
+| --------------- | ---------------------------------------------------------------------- |
+| `partner.logo`  | strona pokazuje samą nazwę; obsługa obrazów wymaga `@sanity/image-url` |
+| `partner.adres` | kafelki partnerów nie są jeszcze odnośnikami                           |
 
 `transmisja.aktywna` **jest** podpięta — wyłączenie ukrywa panel na stronie.
 

@@ -25,7 +25,7 @@ export const oFestiwalu = defineType({
       type: "string",
       group: "naglowek",
       description:
-        "Napis, który widać jako największy tekst tej sekcji. Ostatnie słowo strona sama pokoloruje na czerwono — przy „Dwa filary chińskiej kultury” czerwone będzie „kultury”.",
+        "Napis, który widać jako największy tekst tej sekcji. Ostatnie słowo strona sama pokoloruje na czerwono - przy „Dwa filary chińskiej kultury” czerwone będzie „kultury”.",
     }),
     defineField({
       name: "filary",
@@ -33,7 +33,7 @@ export const oFestiwalu = defineType({
       type: "array",
       group: "filary",
       description:
-        "Zawsze dwie i zawsze w tej kolejności: najpierw Wen (lewa kolumna), potem Wu (prawa). Chiński znak, zapis wymowy i wiersz cech pod opisem strona dokłada sama — nie ma ich tu do wpisania.",
+        "Zawsze dwie i zawsze w tej kolejności: najpierw Wen (lewa kolumna), potem Wu (prawa). Chiński znak, zapis wymowy i wiersz cech pod opisem strona dokłada sama - nie ma ich tu do wpisania.",
       of: [
         defineArrayMember({
           type: "object",
@@ -74,7 +74,7 @@ export const oFestiwalu = defineType({
       rows: 2,
       group: "cytat",
       description:
-        "Największy tekst w tej sekcji, składany szeryfem w cudzysłowie. Trzymaj go krótkim — najlepiej dwa zdania.",
+        "Największy tekst w tej sekcji, składany szeryfem w cudzysłowie. Trzymaj go krótkim - najlepiej dwa zdania.",
     }),
     defineField({
       name: "cytatNota",

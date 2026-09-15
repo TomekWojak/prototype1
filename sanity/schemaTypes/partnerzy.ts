@@ -17,7 +17,7 @@ export const partnerzy = defineType({
       title: "Duży tytuł sekcji",
       type: "string",
       description:
-        "Napis, który widać jako największy tekst tej sekcji. Ostatnie słowo strona sama pokoloruje na czerwono — przy „Kto tworzy festiwal” czerwone będzie „festiwal”.",
+        "Napis, który widać jako największy tekst tej sekcji. Ostatnie słowo strona sama pokoloruje na czerwono - przy „Kto tworzy festiwal” czerwone będzie „festiwal”.",
     }),
     defineField({
       name: "lead",
@@ -32,7 +32,7 @@ export const partnerzy = defineType({
       title: "Grupy partnerów",
       type: "array",
       description:
-        "Partnerzy stoją na stronie w grupach, jedna pod drugą — np. „Patronat i wsparcie”, potem „Organizatorzy”. Kolejność grup i kolejność nazw w grupie przeciągnij myszą.",
+        "Partnerzy stoją na stronie w grupach, jedna pod drugą - np. „Patronat i wsparcie”, potem „Organizatorzy”. Kolejność grup i kolejność nazw w grupie przeciągnij myszą.",
       of: [
         defineArrayMember({
           type: "object",
@@ -59,13 +59,13 @@ export const partnerzy = defineType({
                       title: "Nazwa partnera",
                       type: "string",
                       description:
-                        "Tak, jak partner chce być podpisany. To jedyna rzecz, którą teraz widać — logotypów jeszcze nie pokazujemy.",
+                        "Tak, jak partner chce być podpisany. To jedyna rzecz, którą teraz widać - logotypów jeszcze nie pokazujemy.",
                     }),
                     defineField({
                       name: "logo",
                       title: "Logotyp (jeszcze nieużywany)",
                       description:
-                        "Możesz już wgrać plik, ale strona go NA RAZIE nie pokazuje — obsługa logotypów wymaga jeszcze pracy programisty. Najlepiej SVG albo PNG na przezroczystym tle.",
+                        "Możesz już wgrać plik, ale strona go NA RAZIE nie pokazuje - obsługa logotypów wymaga jeszcze pracy programisty. Najlepiej SVG albo PNG na przezroczystym tle.",
                       type: "image",
                       options: { hotspot: false },
                       fields: [
