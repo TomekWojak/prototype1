@@ -47,7 +47,6 @@ export default function Faq({
 
   return (
     <Section id="faq" tone="soft" labelledBy="faq-tytul">
-      {}
       <Container className="relative">
         <SectionHeading
           id="faq-tytul"
@@ -57,7 +56,6 @@ export default function Faq({
           lead={faqCopy.lead}
         />
 
-        {}
         <div className="mx-auto mt-20 max-w-3xl divide-y divide-line border-y border-line">
           {faq.map((item, index) => {
             const isOpen = open.has(item.q);
@@ -66,7 +64,6 @@ export default function Faq({
 
             return (
               <div key={item.q}>
-                {}
                 <h3>
                   <button
                     type="button"
@@ -108,7 +105,6 @@ export default function Faq({
           })}
         </div>
 
-        {}
         <div className="mt-16 text-center">
           <h3 className="text-2xl">{faqCopy.ctaTitle}</h3>
 

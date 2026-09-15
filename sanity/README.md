@@ -272,12 +272,12 @@ Granicą języków jest **projekcja GROQ** w `src/lib/sanity/query.ts`. Zapis
 
 ```groq
 "groups": grupy[]{
-  "partners": partnerzy[]{ "name": nazwa, "href": adres }
+  "partners": partnerzy[]{ "name": nazwa, "logo": logo{ "url": asset->url, alt } }
 }
 ```
 
 Dzięki temu `content.ts` i cała reszta kodu widzą wyłącznie `label`, `name`,
-`href`. Dopisując pole do schematu, dopisz je w zapytaniu w obu postaciach —
+`logo`. Dopisując pole do schematu, dopisz je w zapytaniu w obu postaciach —
 pominięcie aliasu przepuszcza polską nazwę do kodu.
 
 Nazwy dokumentów w filtrach (`*[_id == "wydarzenie"]`) zostają polskie, bo to

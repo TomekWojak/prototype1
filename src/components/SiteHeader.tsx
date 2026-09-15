@@ -116,7 +116,6 @@ export default function SiteHeader({ event }: { event: FestivalEvent }) {
           : "border-transparent bg-transparent",
       )}
     >
-      {}
       <a
         href="#tresc"
         className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-4 focus:z-50 focus:border focus:border-seal focus:bg-paper focus:px-4 focus:py-2 focus:text-xs focus:font-bold focus:tracking-[0.22em] focus:text-seal focus:uppercase"
@@ -127,7 +126,6 @@ export default function SiteHeader({ event }: { event: FestivalEvent }) {
       <nav aria-label={chrome.navLabel}>
         <Container>
           <div className="flex h-16 items-center justify-between gap-2 sm:h-20">
-            {}
             <a href="#hero" className="group flex shrink-0 items-center gap-3">
               <SealStamp
                 glyph={event.nameCjk}
@@ -143,7 +141,6 @@ export default function SiteHeader({ event }: { event: FestivalEvent }) {
               </span>
             </a>
 
-            {}
             <ul className="hidden items-center lg:flex">
               {navLinks.map((link) => {
                 const activeLink = link.href.slice(1) === active;
@@ -160,7 +157,6 @@ export default function SiteHeader({ event }: { event: FestivalEvent }) {
                       )}
                     >
                       {link.label}
-                      {}
                       {activeLink && (
                         <span
                           aria-hidden="true"
@@ -173,9 +169,7 @@ export default function SiteHeader({ event }: { event: FestivalEvent }) {
               })}
             </ul>
 
-            {}
             <div className="flex shrink-0 items-center gap-1">
-              {}
               <span className="hidden sm:inline-flex">
                 <Button href="#zapisy" variant="solid" size="md">
                   {event.ctaHeader}
@@ -240,7 +234,6 @@ export default function SiteHeader({ event }: { event: FestivalEvent }) {
           </div>
         </Container>
 
-        {}
         <div id={MENU_ID} className="lg:hidden">
           {open && (
             <div className="animate-ink-in max-h-[calc(100dvh_-_4rem)] overflow-y-auto border-b border-line bg-paper sm:max-h-[calc(100dvh_-_5rem)]">

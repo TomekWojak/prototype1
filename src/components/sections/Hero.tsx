@@ -63,18 +63,15 @@ export default function Hero({
       className="flex min-h-[88svh] items-center pt-28 pb-20 sm:pt-32 sm:pb-24"
     >
       <Container className="relative z-10">
-        {}
         <div className="flex items-center gap-12 xl:gap-20">
           <div className="max-w-3xl flex-1">
             <Eyebrow>{event.kicker}</Eyebrow>
 
             <div className="mt-8 flex items-start gap-8 sm:mt-10">
-              {}
               <h1
                 id="hero-tytul"
                 className="text-6xl leading-[0.92] sm:text-7xl lg:text-8xl"
               >
-                {}
                 {lines.map(({ word, accent }, index) => (
                   <Fragment key={`${word}-${index}`}>
                     {index > 0 && " "}
@@ -90,15 +87,12 @@ export default function Hero({
                   </Fragment>
                 ))}
               </h1>
-
-              {}
             </div>
 
             <p className="mt-8 max-w-xl text-lg text-pretty text-ink-muted sm:text-xl">
               {event.tagline}
             </p>
 
-            {}
             <div className="mt-16 max-w-xl">
               <InkRule />
               {wen ? <PillarLine pillar={wen} className="py-5" /> : null}
@@ -106,7 +100,6 @@ export default function Hero({
               {wu ? <PillarLine pillar={wu} className="py-5" /> : null}
             </div>
 
-            {}
             <ul className="mt-16 flex flex-col gap-2 text-sm text-ink-muted sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-5">
               {event.facts.map((fakt, index) => (
                 <Fragment key={fakt}>
@@ -121,7 +114,6 @@ export default function Hero({
               ))}
             </ul>
 
-            {}
             <div className="mt-12 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
               <Button
                 href="#zapisy"
@@ -142,7 +134,6 @@ export default function Hero({
             </div>
           </div>
 
-          {}
           <div className="hidden shrink-0 flex-col items-center gap-10 lg:flex">
             <WenWuCalligraphy className="h-[26rem] w-[12.6rem] text-ink xl:h-[30rem] xl:w-[14.5rem]" />
             <SealStamp glyph={event.nameCjk} className="h-14 w-14 text-seal" />

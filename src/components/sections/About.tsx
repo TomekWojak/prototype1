@@ -27,7 +27,6 @@ function PillarColumn({ pillar }: { pillar: Pillar }) {
     <div>
       <CjkGlyph className="block text-7xl text-ink/10">{pillar.cjk}</CjkGlyph>
 
-      {}
       <h3 className="mt-4 text-2xl">
         {pillar.name}{" "}
         <span
@@ -46,7 +45,6 @@ function PillarColumn({ pillar }: { pillar: Pillar }) {
         {pillar.description}
       </p>
 
-      {}
       <p className="mt-5 text-sm text-ink-faint">{traits.join(" · ")}</p>
     </div>
   );
@@ -85,15 +83,12 @@ export default function About({
           lead={event.lead}
         />
 
-        {}
         <div className="mt-20 grid gap-14 lg:grid-cols-2">
           {columns.map((pillar) => (
             <PillarColumn key={pillar.key} pillar={pillar} />
           ))}
         </div>
 
-        {}
-        {}
         <figure className="mt-24 max-w-3xl">
           <BrushRule />
           <blockquote className="mt-8 font-display text-3xl leading-[1.15] text-balance text-ink sm:text-4xl">
@@ -104,8 +99,6 @@ export default function About({
           </figcaption>
         </figure>
 
-        {}
-        {}
         <ol className="mt-24">
           {modernCreed.map((line, index) => (
             <li key={line}>
@@ -126,13 +119,11 @@ export default function About({
           {modernCreedClosing}
         </p>
 
-        {}
         <div className="mt-24">
           <Eyebrow>Uczestnicy</Eyebrow>
 
           <h3 className="mt-4 text-2xl sm:text-3xl">{audiencesTitle}</h3>
 
-          {}
           <div className="mt-14 grid gap-x-14 gap-y-12 sm:grid-cols-2">
             {audiences.map((audience) => (
               <Card key={audience.title}>

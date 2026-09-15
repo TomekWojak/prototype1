@@ -412,7 +412,7 @@ export const contact = {
 	transferTitle: "Dane do przelewu",
 	taxId: "5170391083",
 	courtRegister: "0000 402 564",
-	statisticalId: "",
+	statisticalId: "380330020",
 	bankAccount: "02 1140 2004 0000 3402 8238 7016",
 	channels: [
 		{ label: "Facebook", href: null },

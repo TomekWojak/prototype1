@@ -106,7 +106,12 @@ export const CONTENT_QUERY = defineQuery(`{
       "label": etykieta,
       "partners": partnerzy[]{
         "name": nazwa,
-        "href": adres
+        "logo": logo{
+          "url": asset->url,
+          alt,
+          "width": asset->metadata.dimensions.width,
+          "height": asset->metadata.dimensions.height
+        }
       }
     },
     "note": nota

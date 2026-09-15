@@ -28,7 +28,6 @@ export default function Activities({
         <div className="mt-20 grid gap-x-14 gap-y-16 lg:grid-cols-2">
           {activities.map((activity) => (
             <Card key={activity.title}>
-              {}
               <div className="flex items-baseline gap-4">
                 {activity.cjk ? (
                   <CjkGlyph className="shrink-0 text-2xl text-seal/50">
@@ -38,7 +37,6 @@ export default function Activities({
                 <h3 className="text-2xl">{activity.title}</h3>
               </div>
 
-              {}
               <p className="mt-4 text-base whitespace-pre-line text-pretty text-ink-muted">
                 {activity.description}
               </p>
@@ -46,7 +44,6 @@ export default function Activities({
           ))}
         </div>
 
-        {}
         <div className="mt-20 max-w-2xl">
           <h3 className="text-2xl">{activitiesCopy.closingTitle}</h3>
 

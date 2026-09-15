@@ -46,7 +46,6 @@ export default function Workshops({
                   </p>
                 </div>
 
-                {}
                 <p className="text-sm text-ink-muted lg:text-right">
                   {meta.map((item, index) => (
                     <Fragment key={`${item}-${index}`}>
@@ -67,7 +66,6 @@ export default function Workshops({
           })}
         </div>
 
-        {}
         <div className="mt-20 max-w-2xl">
           <h3 className="text-2xl">{workshopsCopy.rulesTitle}</h3>
 

@@ -59,13 +59,13 @@ export const partnerzy = defineType({
                       title: "Nazwa partnera",
                       type: "string",
                       description:
-                        "Tak, jak partner chce być podpisany. To jedyna rzecz, którą teraz widać - logotypów jeszcze nie pokazujemy.",
+                        "Tak, jak partner chce być podpisany. Nazwa jest zawsze widoczna na stronie - pod logotypem, jeśli go wgrasz, a samodzielnie, jeśli nie.",
                     }),
                     defineField({
                       name: "logo",
-                      title: "Logotyp (jeszcze nieużywany)",
+                      title: "Logotyp",
                       description:
-                        "Możesz już wgrać plik, ale strona go NA RAZIE nie pokazuje - obsługa logotypów wymaga jeszcze pracy programisty. Najlepiej SVG albo PNG na przezroczystym tle.",
+                        "Najlepiej SVG albo PNG na przezroczystym tle. Strona sama zmniejszy plik do właściwej wysokości, więc nie musisz go przycinać. Bez wgranego pliku zostanie sama nazwa partnera.",
                       type: "image",
                       options: { hotspot: false },
                       fields: [
@@ -74,22 +74,14 @@ export const partnerzy = defineType({
                           title: "Opis logotypu dla czytników ekranu",
                           type: "string",
                           description:
-                            "Dla osób korzystających z czytnika ekranu. Zwykle wystarczy sama nazwa partnera.",
+                            "Prawie zawsze zostaw puste: nazwa partnera stoi pod logotypem, więc czytnik ekranu i tak ją przeczyta, a powtórzenie tylko przeszkadza. Wypełnij jedynie wtedy, gdy w samym logotypie jest napis, którego nie ma w nazwie.",
                         }),
                       ],
-                    }),
-                    defineField({
-                      name: "adres",
-                      title: "Adres strony (jeszcze nieużywany)",
-                      type: "url",
-                      description:
-                        "Docelowo nazwa partnera stanie się odnośnikiem. Na razie strona tego adresu nie używa.",
                     }),
                   ],
                   preview: {
                     select: {
                       title: "nazwa",
-                      subtitle: "adres",
                       media: "logo",
                     },
                   },

@@ -66,12 +66,10 @@ export default async function Home() {
   return (
     <>
       <StructuredData content={content} />
-      {}
       <OrnamentDefs />
 
       <SiteHeader event={content.event} />
 
-      {}
       <main id="tresc" tabIndex={-1} className="flex-1 outline-none">
         <Hero event={content.event} pillars={content.pillars} />
         <About
@@ -109,14 +107,12 @@ export default async function Home() {
         <Faq faq={content.faq} faqCopy={content.faqCopy} />
       </main>
 
-      {}
       <Contact
         event={content.event}
         contact={content.contact}
         contactCopy={content.contactCopy}
       />
 
-      {}
       {content.stream.active ? <VideoDock stream={content.stream} /> : null}
     </>
   );

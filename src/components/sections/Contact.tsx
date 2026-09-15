@@ -199,7 +199,6 @@ export default function Contact({
         />
 
         <div className="mt-20 grid gap-14 lg:grid-cols-3">
-          {}
           <div>
             <Eyebrow>Organizator</Eyebrow>
 
@@ -255,7 +254,6 @@ export default function Contact({
             )}
           </div>
 
-          {}
           <div>
             <Eyebrow>{contactCopy.channelsTitle}</Eyebrow>
 
@@ -289,7 +287,6 @@ export default function Contact({
             </ul>
           </div>
 
-          {}
           <div>
             <Eyebrow>{contactCopy.navTitle}</Eyebrow>
 
@@ -317,7 +314,6 @@ export default function Contact({
           </div>
         </div>
 
-        {}
         <InkRule className="mt-20" />
 
         <div className="flex flex-col gap-4 pt-10 sm:flex-row sm:items-center sm:justify-between">
@@ -327,7 +323,6 @@ export default function Contact({
               <span className="text-sm text-ink-muted">
                 {event.name} · {event.subtitle}
               </span>
-              {}
               <span className="text-xs text-ink-faint">
                 © {year ? `${year} ` : ""}
                 {contact.organiser}

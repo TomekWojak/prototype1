@@ -67,7 +67,6 @@ export default function VideoDock({ stream }: { stream: Content["stream"] }) {
       data-overlay
       className="pointer-events-none fixed right-0 bottom-0 z-50 flex flex-col items-end p-4 sm:p-6"
     >
-      {}
       <div
         id={PANEL_ID}
 
@@ -88,7 +87,6 @@ export default function VideoDock({ stream }: { stream: Content["stream"] }) {
             : "pointer-events-none translate-y-4 scale-95 opacity-0",
         )}
       >
-        {}
         <div className="flex items-center justify-between gap-3 border-b border-line px-2 py-1.5">
           <div className="flex min-w-0 items-center gap-1">
             <button
@@ -121,7 +119,6 @@ export default function VideoDock({ stream }: { stream: Content["stream"] }) {
           </button>
         </div>
 
-        {}
         <div className="relative aspect-video w-full bg-paper-soft">
           {open && stream.embedUrl ? (
             <iframe
@@ -134,7 +131,6 @@ export default function VideoDock({ stream }: { stream: Content["stream"] }) {
             />
           ) : (
             <>
-              {}
               <CjkGlyph className="pointer-events-none absolute -right-4 -bottom-6 text-7xl text-ink/5">
                 直播
               </CjkGlyph>
@@ -168,7 +164,6 @@ export default function VideoDock({ stream }: { stream: Content["stream"] }) {
         </div>
       </div>
 
-      {}
       <button
         type="button"
         onClick={() => setOpen((wasOpen) => !wasOpen)}
@@ -205,12 +200,10 @@ export default function VideoDock({ stream }: { stream: Content["stream"] }) {
           />
         </svg>
 
-        {}
         <span className={cx(!open && "sr-only")}>
           {open ? stream.hideLabel : stream.showLabel}
         </span>
 
-        {}
         {open && (
           <svg
             viewBox="0 0 14 14"

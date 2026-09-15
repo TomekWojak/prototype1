@@ -398,7 +398,6 @@ export default function Registration({
     <Section id="zapisy" tone="paper" labelledBy="zapisy-tytul">
       <Container>
         <div className="grid gap-16 lg:grid-cols-2 lg:gap-20">
-          {}
           <div>
             <SectionHeading
               id="zapisy-tytul"
@@ -447,9 +446,7 @@ export default function Registration({
             </dl>
           </div>
 
-          {}
           <div>
-            {}
             <p aria-live="polite" className="sr-only">
               {status === "done"
                 ? `${formCopy.successTitle}. ${formCopy.successBody}`
@@ -604,7 +601,6 @@ export default function Registration({
                     onChange={(e) => setWebsite(e.target.value)}
                   />
                 </div>
-                {}
                 {submitError && (
                   <p
                     role="alert"
