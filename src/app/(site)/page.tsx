@@ -8,7 +8,6 @@ import Workshops from "@/components/sections/Workshops";
 import Registration from "@/components/sections/Registration";
 import Location from "@/components/sections/Location";
 import Partners from "@/components/sections/Partners";
-import Support from "@/components/sections/Support";
 import Faq from "@/components/sections/Faq";
 import Contact from "@/components/sections/Contact";
 import { getContent, type Content } from "@/lib/content";
@@ -103,7 +102,6 @@ export default async function Home() {
           partnerGroups={content.partnerGroups}
           partnersCopy={content.partnersCopy}
         />
-        <Support supportCopy={content.supportCopy} />
         <Faq faq={content.faq} faqCopy={content.faqCopy} />
       </main>
 

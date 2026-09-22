@@ -8,9 +8,8 @@ const SECTIONS: Array<{ id: string; title: string }> = [
   { id: "zapisy", title: "5. Zapisy" },
   { id: "lokalizacja", title: "6. Lokalizacja" },
   { id: "partnerzy", title: "7. Partnerzy" },
-  { id: "wsparcie", title: "8. Wsparcie — 1,5%" },
-  { id: "faq", title: "9. Najczęstsze pytania" },
-  { id: "kontakt", title: "10. Kontakt i stopka" },
+  { id: "faq", title: "8. Najczęstsze pytania" },
+  { id: "kontakt", title: "9. Kontakt i stopka" },
   { id: "transmisja", title: "Panel transmisji (róg strony)" },
 ];
 

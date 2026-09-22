@@ -14,7 +14,6 @@ sanity/
 │   ├── zapisy.ts       teksty wokół formularza
 │   ├── lokalizacja.ts  godziny, wskazówki dojazdu, zapytanie do Map
 │   ├── partnerzy.ts    grupy partnerów i logotypy
-│   ├── wsparcie.ts     baner „Przekaż nam 1,5%”
 │   ├── faq.ts          pytania i odpowiedzi
 │   ├── kontakt.ts      dane kontaktowe, kanały, stopka
 │   └── transmisja.ts   panel z odtwarzaczem
@@ -150,11 +149,9 @@ automatyczne odtwarzanie z dźwiękiem i bez niego film by nie ruszył.
 |             | `zapytanieMapy`, `etykietaMapy`                                  | `location.mapsQuery`, `locationCopy.mapsLabel`                      |
 | partnerzy   | `lead`, `grupy[]`, `nota`                                        | `partnersCopy.lead`, `partnerGroups`, `partnersCopy.note`           |
 | faq         | `lead`, `pytania[]`, `ctaTytul`, `ctaEtykieta`                   | `faqCopy.*`, `faq`                                                  |
-| wsparcie    | `nadkreslenie`, `tytul`, `tresc`, `ctaEtykieta`                  | `supportCopy`                                                       |
 | kontakt     | `lead`, `organizator`, `email`, `telefon`                        | `contact.*`, `contactCopy.lead`                                     |
 |             | `kanalyTytul`, `kanaly[]` — serwis + adres                       | `contactCopy.channelsTitle`, `contact.channels`                     |
 |             | `nawigacjaTytul`, `powrotNaGore`                                 | `contactCopy.navTitle`, `.backToTop`                                |
-|             | `daneTytul`, `nip`, `krs`, `regon`, `konto`                      | `contact.transferTitle`, `.taxId`, `.courtRegister`, `.statisticalId`, `.bankAccount` |
 | transmisja  | `aktywna`, `adresYouTube` + napisy                               | `stream`                                                            |
 
 Miejsce w sekcji Lokalizacja **nie ma własnego pola** — bierze się z dokumentu

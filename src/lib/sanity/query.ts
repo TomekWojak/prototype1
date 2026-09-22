@@ -116,12 +116,6 @@ export const CONTENT_QUERY = defineQuery(`{
     },
     "note": nota
   },
-  "support": *[_id == "wsparcie"][0]{
-    "eyebrow": nadkreslenie,
-    "title": tytul,
-    "body": tresc,
-    "ctaLabel": ctaEtykieta
-  },
   "faq": *[_id == "faq"][0]{
     "eyebrow": nadkreslenie,
     "title": tytul,
@@ -140,11 +134,6 @@ export const CONTENT_QUERY = defineQuery(`{
     "organiser": organizator,
     email,
     "phone": telefon,
-    "transferTitle": daneTytul,
-    "taxId": nip,
-    "courtRegister": krs,
-    "statisticalId": regon,
-    "bankAccount": konto,
     "channelsTitle": kanalyTytul,
     "channels": kanaly[]{
       "label": nazwa,

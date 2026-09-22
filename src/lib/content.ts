@@ -118,18 +118,12 @@ export type Content = {
   };
   partnerGroups: readonly PartnerGroup[];
   partnersCopy: SectionCopy & { lead: string };
-  supportCopy: SectionCopy & { body: string; ctaLabel: string };
   faq: readonly Question[];
   faqCopy: SectionCopy & { lead: string; ctaTitle: string; ctaLabel: string };
   contact: {
     organiser: string;
     email: string;
     phone: string;
-    transferTitle: string;
-    taxId: string;
-    courtRegister: string;
-    statisticalId: string;
-    bankAccount: string;
     phoneHref: string;
     channels: readonly Channel[];
   };
@@ -546,22 +540,6 @@ export async function getContent(): Promise<Content> {
       lead: text(field<string>("partners", "lead"), fallback.partnersCopy.lead),
     },
 
-    supportCopy: {
-      eyebrow: text(
-        field<string>("support", "eyebrow"),
-        fallback.supportCopy.eyebrow,
-      ),
-      title: text(
-        field<string>("support", "title"),
-        fallback.supportCopy.title,
-      ),
-      body: text(field<string>("support", "body"), fallback.supportCopy.body),
-      ctaLabel: text(
-        field<string>("support", "ctaLabel"),
-        fallback.supportCopy.ctaLabel,
-      ),
-    },
-
     faq: list(
       field<Array<{ q?: string; a?: string }>>("faq", "questions"),
       fallback.faq,
@@ -589,23 +567,6 @@ export async function getContent(): Promise<Content> {
       email: text(field<string>("contact", "email"), fallback.contact.email),
       phone,
       phoneHref: dialable(phone),
-      transferTitle: text(
-        field<string>("contact", "transferTitle"),
-        fallback.contact.transferTitle,
-      ),
-      taxId: text(field<string>("contact", "taxId"), fallback.contact.taxId),
-      courtRegister: text(
-        field<string>("contact", "courtRegister"),
-        fallback.contact.courtRegister,
-      ),
-      statisticalId: text(
-        field<string>("contact", "statisticalId"),
-        fallback.contact.statisticalId,
-      ),
-      bankAccount: text(
-        field<string>("contact", "bankAccount"),
-        fallback.contact.bankAccount,
-      ),
       channels: list(
         field<Array<{ label?: string; href?: string }>>("contact", "channels"),
         fallback.contact.channels.map((c) => channel(c.label, c.href)),
