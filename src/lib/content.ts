@@ -299,7 +299,7 @@ export async function getContent(): Promise<Content> {
     ),
     audiencesTitle: text(
       field<string>("about", "audiencesTitle"),
-      "Dla kogo jest ten festiwal",
+      fallback.aboutCopy.audiencesTitle,
     ),
     audiences: list(
       field<Array<{ title?: string; description?: string }>>(
